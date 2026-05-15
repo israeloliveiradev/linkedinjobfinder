@@ -44,8 +44,14 @@ export function AdvancedFilters() {
             onChange={(e) => setManualFilter('location', e.target.value)}
             className="w-full bg-secondary/50 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
           >
-            {LOCATION_OPTIONS.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            {LOCATION_OPTIONS.map((opt, i) => (
+              <option 
+                key={`${opt.value}-${i}`} 
+                value={opt.value} 
+                disabled={(opt as any).disabled}
+              >
+                {opt.label}
+              </option>
             ))}
           </select>
         </div>

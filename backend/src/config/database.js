@@ -1,22 +1,19 @@
-import pg from 'pg';
-import { config } from './env.js';
+import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 
-const { Pool } = pg;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: config.nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ [Database] SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY são obrigatórios.');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: { persistSession: false },
+  realtime: { transport: ws },
 });
 
-pool.on('connect', () => {
-  console.log('🐘 [Database] Conectado ao PostgreSQL.');
-});
+console.log('🐘 [Database] Supabase client inicializado.');
 
-pool.on('error', (err) => {
-  console.error('❌ [Database] Erro inesperado no cliente Postgres:', err);
-  process.exit(-1);
-});
-
-export const query = (text, params) => pool.query(text, params);
-
-export default pool;
+export default supabase;

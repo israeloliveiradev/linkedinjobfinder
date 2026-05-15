@@ -1,52 +1,79 @@
 export const GEO_IDS = {
+  // --- BRASIL ---
   brasil: '106057199',
   brazil: '106057199',
-  'sao paulo': '104440326',
-  sp: '104440326',
-  'rio de janeiro': '104768393',
-  rj: '104768393',
-  'belo horizonte': '104539166',
-  bh: '104539166',
-  curitiba: '105650223',
-  cwb: '105650223',
-  'porto alegre': '101581926',
-  poa: '101581926',
-  brasilia: '100364837',
-  df: '100364837',
-  salvador: '100179879',
-  ssa: '100179879',
-  fortaleza: '101065158',
-  recife: '100393800',
-  manaus: '100560539',
-  goiania: '101486310',
-  campinas: '100642161',
-  florianopolis: '100243797',
-  vitoria: '101009318',
-  natal: '102044279',
-  maceio: '100706882',
-  'joao pessoa': '101237533',
-  teresina: '101165560',
-  'campo grande': '101082067',
-  cuiaba: '101318387',
-  belem: '100172711',
-  macapa: '100227943',
-  'porto velho': '100710783',
-  'boa vista': '100680256',
-  palmas: '101559911',
-  'rio branco': '100683863',
-  aracaju: '100172705',
-  'sao luis': '100393024',
-  londrina: '101588870',
-  joinville: '101730680',
-  uberlandia: '100994360',
-  'ribeirao preto': '101437931',
-  sorocaba: '101563475',
-  santos: '101467371',
-  'sao jose dos campos': '100786332',
-  'mogi das cruzes': '101407684',
-  osasco: '101427082',
-  'santo andre': '101453764',
-  portugal: '100364837',
+  remoto: '92000000',
+  remote: '92000000',
+
+  // --- ESTADOS / REGIÕES METROPOLITANAS BRASILEIRAS ---
+  // São Paulo
+  'sao paulo': '105871508',
+  'são paulo': '105871508',
+  sp: '105871508',
+  // São Paulo (cidade específica)
+  'sao paulo cidade': '104746682',
+  'são paulo cidade': '104746682',
+
+  // Rio de Janeiro
+  'rio de janeiro': '103658898',
+  rj: '103658898',
+
+  // Belo Horizonte
+  'belo horizonte': '105818291',
+  bh: '105818291',
+
+  // Curitiba
+  curitiba: '103501557',
+  cwb: '103501557',
+
+  // Porto Alegre
+  'porto alegre': '102556749',
+  poa: '102556749',
+
+  // Brasília / DF
+  brasilia: '104413988',
+  brasília: '104413988',
+  df: '104413988',
+
+  // Salvador
+  salvador: '104263468',
+  ssa: '104263468',
+
+  // Fortaleza
+  fortaleza: '103836099',
+
+  // Recife
+  recife: '106236613',
+
+  // Manaus
+  manaus: '100215884',
+
+  // Goiânia
+  goiania: '106936354',
+  goiânia: '106936354',
+
+  // Campinas
+  campinas: '103451405',
+
+  // Florianópolis
+  florianopolis: '106636575',
+  florianópolis: '106636575',
+
+  // Vitória
+  vitoria: '90009583',
+  vitória: '90009583',
+
+  // Santos
+  santos: '105900002',
+
+  // Osasco
+  osasco: '105724459',
+
+  // --- PAÍSES INTERNACIONAIS ---
+  'estados unidos': '103644278',
+  eua: '103644278',
+  usa: '103644278',
+  'united states': '103644278',
   canada: '101174742',
   argentina: '100446943',
   chile: '104621616',
@@ -60,16 +87,6 @@ export const GEO_IDS = {
   spain: '105646813',
   franca: '105015875',
   france: '105015875',
-  'estados unidos': '103644278',
-  eua: '103644278',
-  usa: '103644278',
-  'united states': '103644278',
-  'new york': '105080838',
-  california: '102095887',
-  florida: '101318387',
-  texas: '102748797',
-  australia: '101452733',
-  india: '102713980',
   irlanda: '104738515',
   ireland: '104738515',
   holanda: '102890719',

@@ -1,9 +1,9 @@
-import { env } from '../config/env.js';
+import { config } from '../config/env.js';
 
 export const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
-  
+
   const response = {
     success: false,
     error: {
@@ -13,7 +13,7 @@ export const errorHandler = (err, req, res, next) => {
     },
   };
 
-  if (env.nodeEnv === 'development') {
+  if (config.nodeEnv === 'development') {
     response.error.stack = err.stack;
   }
 

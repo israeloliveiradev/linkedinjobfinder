@@ -29,10 +29,30 @@ export const JOB_TYPE_OPTIONS = [
 ];
 
 export const LOCATION_OPTIONS = [
-  { label: 'Brasil (Todo)', value: 'brasil' },
-  { label: 'São Paulo, SP', value: 'sao paulo' },
-  { label: 'Rio de Janeiro, RJ', value: 'rio de janeiro' },
-  { label: 'Curitiba, PR', value: 'curitiba' },
-  { label: 'Belo Horizonte, MG', value: 'belo horizonte' },
-  { label: 'Remoto (Sem Local)', value: 'remote' },
+  // Default
+  { label: '🌎 Brasil (Todo o País)', value: 'brasil' },
+  { label: '🌐 Remoto (Qualquer Lugar)', value: 'remoto' },
+
+  // Divider group - Principais Capitais
+  { label: '── Capitais ──', value: '', disabled: true },
+  { label: '📍 São Paulo, SP', value: 'sao paulo' },
+  { label: '📍 Rio de Janeiro, RJ', value: 'rio de janeiro' },
+  { label: '📍 Brasília, DF', value: 'brasilia' },
+  { label: '📍 Belo Horizonte, MG', value: 'belo horizonte' },
+  { label: '📍 Salvador, BA', value: 'salvador' },
+  { label: '📍 Fortaleza, CE', value: 'fortaleza' },
+  { label: '📍 Manaus, AM', value: 'manaus' },
+  { label: '📍 Curitiba, PR', value: 'curitiba' },
+  { label: '📍 Recife, PE', value: 'recife' },
+  { label: '📍 Porto Alegre, RS', value: 'porto alegre' },
+  { label: '📍 Goiânia, GO', value: 'goiania' },
+  { label: '📍 Florianópolis, SC', value: 'florianopolis' },
+  { label: '📍 Vitória, ES', value: 'vitoria' },
+
+  // Outras cidades
+  { label: '── Outras Cidades ──', value: '', disabled: true },
+  { label: '📍 Campinas, SP', value: 'campinas' },
+  { label: '📍 Santos, SP', value: 'santos' },
+  { label: '📍 Osasco, SP', value: 'osasco' },
+  { label: '📍 São Paulo (Cidade Exata)', value: 'sao paulo cidade' },
 ];

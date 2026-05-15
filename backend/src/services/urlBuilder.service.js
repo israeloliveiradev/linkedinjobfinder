@@ -2,6 +2,11 @@ import { GEO_IDS } from '../constants/geoIds.js';
 import { JOB_TYPES, EXPERIENCE_LEVELS, WORK_MODES, SORT_OPTIONS } from '../constants/filters.js';
 import { TIME_PERIODS } from '../constants/timePeriods.js';
 
+
+// Normaliza acentos e caixa para garantir match no dicionário de geoIds
+const normalizeLocation = (str) =>
+  str.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+
 export class UrlBuilderService {
   build(params) {
     const {
@@ -24,8 +29,9 @@ export class UrlBuilderService {
 
     searchParams.append('keywords', keywords);
 
-    const finalGeoId = geoId || GEO_IDS[(location || 'brasil').toLowerCase()] || GEO_IDS['brasil'];
-    console.log(`[UrlBuilder] 🌍 Location: ${location} -> GeoID: ${finalGeoId}`);
+    const locationKey = normalizeLocation(location || 'brasil');
+    const finalGeoId = geoId || GEO_IDS[locationKey] || GEO_IDS[normalizeLocation(location || '')] || GEO_IDS['brasil'];
+    console.log(`[UrlBuilder] 🌍 Location: "${location}" (key: "${locationKey}") -> GeoID: ${finalGeoId}`);
     searchParams.append('geoId', finalGeoId);
 
     const periodSeconds = TIME_PERIODS[period] || 86400;
