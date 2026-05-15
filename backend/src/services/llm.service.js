@@ -1,12 +1,12 @@
 import OpenAI from 'openai';
-import { env } from '../config/env.js';
+import { config } from '../config/env.js';
 import { retryWithBackoff } from '../utils/retry.js';
 import { LlmError } from '../errors/LlmError.js';
 
 export class LlmService {
   constructor() {
     this.client = new OpenAI({
-      apiKey: env.groqApiKey,
+      apiKey: config.groqApiKey,
       baseURL: 'https://api.groq.com/openai/v1',
     });
   }
@@ -15,7 +15,7 @@ export class LlmService {
     return retryWithBackoff(async () => {
       try {
         const response = await this.client.chat.completions.create({
-          model: env.llmModel,
+          model: config.llmModel,
           messages,
           temperature: options.temperature ?? 0,
           max_tokens: options.maxTokens ?? 1000,
@@ -25,6 +25,6 @@ export class LlmService {
       } catch (error) {
         throw new LlmError(`LLM call failed: ${error.message}`);
       }
-    }, env.llmMaxRetries, env.llmRetryBaseDelayMs);
+    }, config.llmMaxRetries, config.llmRetryBaseDelayMs);
   }
 }
