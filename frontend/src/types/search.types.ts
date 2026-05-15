@@ -1,0 +1,45 @@
+export interface ParsedParams {
+  keywords: string;
+  location: string;
+  geoId?: string;
+  period: string;
+  jobType: string[];
+  experienceLevel: string[];
+  workMode: string[];
+  sortBy: string;
+  distance: number;
+  easyApply: boolean;
+  lowApplicants: boolean;
+  company: string | null;
+}
+
+export interface SearchResult {
+  id: string;
+  createdAt: string;
+  originalQuery: string;
+  parsedParams: ParsedParams;
+  expandedKeywords: string[];
+  booleanQuery: string;
+  urls: {
+    main: string;
+    express: string;
+  };
+  filtersApplied: number;
+}
+
+export interface Preset {
+  id: string;
+  name: string;
+  params: ParsedParams;
+  createdAt: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  error?: {
+    message: string;
+    code: string;
+    details?: any;
+  };
+}
