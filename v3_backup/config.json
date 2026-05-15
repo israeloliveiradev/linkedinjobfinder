@@ -1,0 +1,11 @@
+{
+  "defaultLocation": "brasil",
+  "defaultPeriod": "24h",
+  "defaultSortBy": "DD",
+  "defaultDistance": 25,
+  "maxHistory": 100,
+  "maxPresets": 50,
+  "autoOpenBrowser": false,
+  "expandKeywords": true,
+  "debugMode": false
+}
