@@ -35,7 +35,9 @@ export function ResultCard({ result }: ResultCardProps) {
 
   const handleFeatureClick = async (featureName: string) => {
     try {
-      setClickedFeatures(prev => [...prev, featureName]);
+      if (!isPro) {
+        setClickedFeatures(prev => [...prev, featureName]);
+      }
       await api.post('/api/search/use-feature', { feature: featureName });
     } catch (err) {
       console.error('[Feature Tracker Error]', err);
@@ -579,7 +581,7 @@ export function ResultCard({ result }: ResultCardProps) {
                 <ExternalLink className="h-5 w-5 group-hover:scale-110 transition-transform" />
                 <span>Abrir Busca no LinkedIn</span>
               </a>
-              {result.urls.express && !clickedFeatures.includes('express') ? (
+              {result.urls.express && (isPro || !clickedFeatures.includes('express')) ? (
                 <a
                   href={result.urls.express}
                   onClick={() => handleFeatureClick('express')}
@@ -627,7 +629,7 @@ export function ResultCard({ result }: ResultCardProps) {
             </div>
  
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {result.urls.postsVaga && !clickedFeatures.includes('postsVaga') ? (
+              {result.urls.postsVaga && (isPro || !clickedFeatures.includes('postsVaga')) ? (
                 <a
                   href={result.urls.postsVaga}
                   onClick={() => handleFeatureClick('postsVaga')}
@@ -648,7 +650,7 @@ export function ResultCard({ result }: ResultCardProps) {
                 </button>
               )}
  
-              {result.urls.postsHiring && !clickedFeatures.includes('postsHiring') ? (
+              {result.urls.postsHiring && (isPro || !clickedFeatures.includes('postsHiring')) ? (
                 <a
                   href={result.urls.postsHiring}
                   onClick={() => handleFeatureClick('postsHiring')}
@@ -669,7 +671,7 @@ export function ResultCard({ result }: ResultCardProps) {
                 </button>
               )}
  
-              {result.urls.postsCurriculo && !clickedFeatures.includes('postsCurriculo') ? (
+              {result.urls.postsCurriculo && (isPro || !clickedFeatures.includes('postsCurriculo')) ? (
                 <a
                   href={result.urls.postsCurriculo}
                   onClick={() => handleFeatureClick('postsCurriculo')}
