@@ -5,8 +5,8 @@ export class HistoryService {
     this.historyRepository = historyRepository;
   }
 
-  async getAll() {
-    return this.historyRepository.findAll();
+  async getAll(userId) {
+    return this.historyRepository.findAll(userId);
   }
 
   async addEntry(entryData) {
@@ -19,11 +19,11 @@ export class HistoryService {
     return entry;
   }
 
-  async removeEntry(id) {
-    await this.historyRepository.deleteById(id);
+  async removeEntry(id, userId) {
+    await this.historyRepository.deleteById(id, userId);
   }
 
-  async clearAll() {
-    await this.historyRepository.clear();
+  async clearAll(userId) {
+    await this.historyRepository.clear(userId);
   }
 }

@@ -23,7 +23,26 @@ export class LlmService {
         });
         return response.choices[0].message.content;
       } catch (error) {
-        throw new LlmError(`LLM call failed: ${error.message}`);
+        console.warn(`[LLM Service] Groq falhou: ${error.message}. Tentando Gemini...`);
+        if (!config.geminiApiKey) {
+          throw new LlmError(`LLM call failed (Groq), e sem chave Gemini para fallback.`);
+        }
+        const geminiClient = new OpenAI({
+          apiKey: config.geminiApiKey,
+          baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+        });
+        try {
+          const geminiResponse = await geminiClient.chat.completions.create({
+            model: config.geminiModel,
+            messages,
+            temperature: options.temperature ?? 0,
+            max_tokens: options.maxTokens ?? 1000,
+            response_format: options.json ? { type: 'json_object' } : undefined,
+          });
+          return geminiResponse.choices[0].message.content;
+        } catch (geminiError) {
+          throw new LlmError(`LLM call failed em ambos (Groq e Gemini). Erro Gemini: ${geminiError.message}`);
+        }
       }
     }, config.llmMaxRetries, config.llmRetryBaseDelayMs);
   }

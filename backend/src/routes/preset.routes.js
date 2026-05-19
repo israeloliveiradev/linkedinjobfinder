@@ -4,12 +4,15 @@ import { PresetService } from '../services/preset.service.js';
 import { PresetRepository } from '../repositories/preset.repository.js';
 import { validateRequest } from '../middlewares/validateRequest.js';
 import { presetSchema } from '../validators/preset.validator.js';
+import { requireAuth } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
 const presetRepository = new PresetRepository();
 const presetService = new PresetService(presetRepository);
 const presetController = new PresetController(presetService);
+
+router.use(requireAuth);
 
 router.get('/', (req, res, next) => presetController.getAll(req, res, next));
 router.get('/:name', (req, res, next) => presetController.getByName(req, res, next));

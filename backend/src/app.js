@@ -16,7 +16,11 @@ app.use(express.json());
 app.use(requestLogger);
 app.use(globalLimiter);
 
+import { toNodeHandler } from 'better-auth/node';
+import { auth } from './config/auth.js';
+
 // Routes
+app.all('/api/auth/*', toNodeHandler(auth));
 app.use(routes);
 
 // Error Handling

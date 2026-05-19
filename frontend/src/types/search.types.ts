@@ -11,6 +11,7 @@ export interface ParsedParams {
   easyApply: boolean;
   lowApplicants: boolean;
   company: string | null;
+  recruiterAdvice?: string;
 }
 
 export interface SearchResult {
@@ -23,6 +24,12 @@ export interface SearchResult {
   urls: {
     main: string;
     express: string;
+    fallback1h?: string;
+    fallback24h?: string;
+    fallback3d?: string;
+    postsVaga?: string;
+    postsHiring?: string;
+    postsCurriculo?: string;
   };
   filtersApplied: number;
 }

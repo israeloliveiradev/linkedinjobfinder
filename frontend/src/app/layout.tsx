@@ -7,8 +7,8 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LinkedIn Job Finder v4 | Busca Inteligente",
-  description: "Encontre as melhores vagas no LinkedIn usando Inteligência Artificial para otimizar seus filtros.",
+  title: "vagas.rankia.cloud | Localizador de Vagas de Elite",
+  description: "Mapeie e encontre as melhores vagas no LinkedIn de forma cirúrgica e direta.",
 };
 
 export default function RootLayout({

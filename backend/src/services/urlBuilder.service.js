@@ -11,6 +11,7 @@ export class UrlBuilderService {
   build(params) {
     const {
       keywords,
+      rawKeywords,
       location,
       geoId,
       period,
@@ -60,9 +61,48 @@ export class UrlBuilderService {
     if (lowApplicants) searchParams.append('f_JIYN', 'true');
     if (company) searchParams.append('f_C', company);
 
+    const buildWithPeriod = (seconds) => {
+      const p = new URLSearchParams(searchParams);
+      p.set('f_TPR', `r${seconds}`);
+      return `${baseUrl}?${p.toString()}`;
+    };
+
+    // Make a flat, parenthesis-free keyword search query that is 100% bulletproof for LinkedIn content search URL.
+    const makeFlatQuery = (prefix, rawStr) => {
+      if (!rawStr) return `"${prefix}"`;
+      const stopWords = new Set(['de', 'para', 'em', 'a', 'o', 'com', 'e', 'do', 'da']);
+      const words = rawStr
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // remove accents
+        .replace(/[^a-zA-Z0-9\s]/g, '') // remove special chars
+        .split(/\s+/)
+        .map(w => w.trim())
+        .filter(w => w.length > 1 && !stopWords.has(w));
+      
+      const quotedWords = words.map(w => `"${w}"`);
+      return `"${prefix}" ${quotedWords.join(' ')}`;
+    };
+
+    const postSearchBaseUrl = 'https://www.linkedin.com/search/results/content/';
+
+    const buildPostUrl = (prefix, rawStr) => {
+      const q = makeFlatQuery(prefix, rawStr);
+      const p = new URLSearchParams();
+      p.append('keywords', q);
+      p.append('datePosted', '"past-24h"');
+      p.append('sortBy', '"date_posted"');
+      return `${postSearchBaseUrl}?${p.toString()}`;
+    };
+
     return {
       main: `${baseUrl}?${searchParams.toString()}`,
-      express: `${baseUrl}?${searchParams.toString()}&f_EA=true`
+      express: `${baseUrl}?${searchParams.toString()}&f_AL=true`,
+      fallback1h: buildWithPeriod(3600),
+      fallback24h: buildWithPeriod(86400),
+      fallback3d: buildWithPeriod(259200),
+      postsVaga: buildPostUrl('vaga', rawKeywords || keywords),
+      postsHiring: buildPostUrl('contratando', rawKeywords || keywords),
+      postsCurriculo: buildPostUrl('curriculo', rawKeywords || keywords)
     };
   }
 }

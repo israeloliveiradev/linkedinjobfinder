@@ -9,8 +9,10 @@ const historyRepository = new HistoryRepository();
 const historyService = new HistoryService(historyRepository);
 const historyController = new HistoryController(historyService);
 
-router.get('/', (req, res, next) => historyController.getAll(req, res, next));
-router.delete('/:id', (req, res, next) => historyController.delete(req, res, next));
-router.delete('/', (req, res, next) => historyController.clear(req, res, next));
+import { requireAuth } from '../middlewares/auth.middleware.js';
+
+router.get('/', requireAuth, (req, res, next) => historyController.getAll(req, res, next));
+router.delete('/:id', requireAuth, (req, res, next) => historyController.delete(req, res, next));
+router.delete('/', requireAuth, (req, res, next) => historyController.clear(req, res, next));
 
 export default router;

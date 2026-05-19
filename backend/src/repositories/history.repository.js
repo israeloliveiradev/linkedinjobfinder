@@ -1,12 +1,31 @@
 import supabase from '../config/database.js';
 
 export class HistoryRepository {
-  async findAll() {
-    const { data, error } = await supabase
+  async findAll(userId) {
+    // 1. Verifica se o usuário é PRO
+    const { data: sub } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    const isPro = sub?.status === 'pro' && (!sub.expires_at || new Date(sub.expires_at) > new Date());
+
+    // 2. Constrói query
+    let queryBuilder = supabase
       .from('search_history')
       .select('*')
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(50);
+
+    // Se não for PRO, limita o histórico a 7 dias
+    if (!isPro) {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      queryBuilder = queryBuilder.gte('created_at', sevenDaysAgo);
+    }
+
+    const { data, error } = await queryBuilder;
 
     if (error) throw new Error(`HistoryRepository.findAll: ${error.message}`);
 
@@ -26,6 +45,7 @@ export class HistoryRepository {
     const { error } = await supabase
       .from('search_history')
       .insert({
+        user_id: entry.user_id,
         original_query: entry.originalQuery,
         parsed_params: entry.parsedParams,
         expanded_keywords: entry.expandedKeywords,
@@ -37,20 +57,21 @@ export class HistoryRepository {
     if (error) throw new Error(`HistoryRepository.add: ${error.message}`);
   }
 
-  async deleteById(id) {
+  async deleteById(id, userId) {
     const { error } = await supabase
       .from('search_history')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('user_id', userId);
 
     if (error) throw new Error(`HistoryRepository.deleteById: ${error.message}`);
   }
 
-  async clear() {
+  async clear(userId) {
     const { error } = await supabase
       .from('search_history')
       .delete()
-      .gte('created_at', '1900-01-01');
+      .eq('user_id', userId);
 
     if (error) throw new Error(`HistoryRepository.clear: ${error.message}`);
   }

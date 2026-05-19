@@ -2,3 +2,6 @@ node_modules
 .env
 data/*.json
 logs/*.log
+.agents
+.cursor
+.antigravity

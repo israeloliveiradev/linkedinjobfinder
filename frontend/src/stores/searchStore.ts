@@ -7,6 +7,8 @@ export interface ManualFilters {
   experienceLevels: string[];
   jobTypes: string[];
   location: string;
+  antiSpam: boolean;
+  negativeKeywords: string;
 }
 
 interface SearchState {
@@ -27,6 +29,8 @@ const initialFilters: ManualFilters = {
   experienceLevels: [],
   jobTypes: [],
   location: 'brasil',
+  antiSpam: true, // Habilitado por padrão porque consultorias de spam são horríveis!
+  negativeKeywords: '',
 };
 
 export const useSearchStore = create<SearchState>((set) => ({

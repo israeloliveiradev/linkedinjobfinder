@@ -1,10 +1,11 @@
 import supabase from '../config/database.js';
 
 export class PresetRepository {
-  async findAll() {
+  async findAll(userId) {
     const { data, error } = await supabase
       .from('search_presets')
       .select('*')
+      .eq('user_id', userId)
       .order('name', { ascending: true });
 
     if (error) throw new Error(`PresetRepository.findAll: ${error.message}`);
@@ -18,10 +19,11 @@ export class PresetRepository {
     }));
   }
 
-  async findByName(name) {
+  async findByName(name, userId) {
     const { data, error } = await supabase
       .from('search_presets')
       .select('*')
+      .eq('user_id', userId)
       .ilike('name', name)
       .maybeSingle();
 
@@ -38,18 +40,19 @@ export class PresetRepository {
   }
 
   async add(preset) {
-    const { name, query, params } = preset;
+    const { name, query, params, user_id } = preset;
     const { error } = await supabase
       .from('search_presets')
-      .upsert({ name, query, params }, { onConflict: 'name' });
+      .upsert({ name, query, params, user_id }, { onConflict: 'user_id, name' });
 
     if (error) throw new Error(`PresetRepository.add: ${error.message}`);
   }
 
-  async deleteByName(name) {
+  async deleteByName(name, userId) {
     const { error } = await supabase
       .from('search_presets')
       .delete()
+      .eq('user_id', userId)
       .ilike('name', name);
 
     if (error) throw new Error(`PresetRepository.deleteByName: ${error.message}`);
