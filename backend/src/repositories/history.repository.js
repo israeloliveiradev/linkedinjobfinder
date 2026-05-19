@@ -29,16 +29,29 @@ export class HistoryRepository {
 
     if (error) throw new Error(`HistoryRepository.findAll: ${error.message}`);
 
-    return (data || []).map(row => ({
-      id: row.id,
-      originalQuery: row.original_query,
-      parsedParams: row.parsed_params,
-      expandedKeywords: row.expanded_keywords,
-      booleanQuery: row.boolean_query,
-      urls: row.urls,
-      filtersApplied: row.filters_applied,
-      createdAt: row.created_at
-    }));
+    return (data || []).map(row => {
+      const urls = row.urls || {};
+      
+      // Se não for PRO, filtra as URLs de acordo com os recursos já utilizados globalmente
+      const filteredUrls = isPro ? urls : {
+        ...urls,
+        express: sub?.used_express ? null : urls.express,
+        postsVaga: sub?.used_posts_vaga ? null : urls.postsVaga,
+        postsHiring: sub?.used_posts_hiring ? null : urls.postsHiring,
+        postsCurriculo: sub?.used_posts_curriculo ? null : urls.postsCurriculo
+      };
+
+      return {
+        id: row.id,
+        originalQuery: row.original_query,
+        parsedParams: row.parsed_params,
+        expandedKeywords: row.expanded_keywords,
+        booleanQuery: row.boolean_query,
+        urls: filteredUrls,
+        filtersApplied: row.filters_applied,
+        createdAt: row.created_at
+      };
+    });
   }
 
   async add(entry) {
