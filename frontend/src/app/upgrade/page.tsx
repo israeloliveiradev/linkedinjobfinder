@@ -71,6 +71,10 @@ export default function UpgradePage() {
                 <Check className="w-5 h-5 text-green-500 shrink-0" />
                 <span><strong>1 de cada uma</strong> das outras 3 buscas de posts ("Vaga", "Contratando", "Currículo")</span>
               </li>
+              <li className="flex items-center gap-3 text-sm text-foreground/80 font-semibold">
+                <Check className="w-5 h-5 text-green-500 shrink-0" />
+                <span><strong>2 Testes do Copiloto IA</strong> (para analisar compatibilidade e gerar pitches)</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -142,7 +146,7 @@ export default function UpgradePage() {
               </li>
               <li className="flex items-center gap-3 text-sm text-foreground/80 font-semibold">
                 <Check className="w-5 h-5 text-primary shrink-0" />
-                <span><strong>Copiloto IA de Currículo</strong>: Match Score e Otimizador ATS em tempo real</span>
+                <span><strong>Copiloto IA Ilimitado</strong>: Match Score, ATS e pitches sem restrições!</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-foreground/80 font-semibold">
                 <Check className="w-5 h-5 text-primary shrink-0" />
