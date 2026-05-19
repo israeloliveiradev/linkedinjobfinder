@@ -18,8 +18,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Substitua pelo seu ID de Medição (G-XXXXXXXXXX) ou configure a variável NEXT_PUBLIC_GA_ID no seu painel da Vercel
-  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX";
+  // Substitua pelo seu ID de Medição (G-F5MTXPCGFB) ou configure a variável NEXT_PUBLIC_GA_ID no seu painel da Vercel
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-F5MTXPCGFB";
 
   return (
     <html lang="pt-BR" suppressHydrationWarning>
