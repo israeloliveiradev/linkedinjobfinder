@@ -45,6 +45,24 @@ export function ResultCard({ result }: ResultCardProps) {
   };
 
   const isPro = !!result.parsedParams.recruiterAdvice;
+  const [copilotLimitInfo, setCopilotLimitInfo] = useState<any>(null);
+  const [loadingLimit, setLoadingLimit] = useState(true);
+
+  // Fetch Copilot limit and remaining uses for current user
+  useEffect(() => {
+    api.get('/api/search/copilot-limit')
+      .then(res => {
+        setCopilotLimitInfo(res.data);
+      })
+      .catch(err => {
+        console.error('[Copilot Limit Load]', err);
+      })
+      .finally(() => {
+        setLoadingLimit(false);
+      });
+  }, []);
+
+  const isCopilotLocked = copilotLimitInfo ? (!copilotLimitInfo.isPro && copilotLimitInfo.remaining <= 0) : !isPro;
 
   // Hydration-safe localStorage reading
   useEffect(() => {
@@ -151,6 +169,11 @@ export function ResultCard({ result }: ResultCardProps) {
         keywords: result.parsedParams.keywords
       });
       setCopilotResult(res.data);
+      
+      // Refresh user limits to update remaining usos counter in real-time!
+      api.get('/api/search/copilot-limit')
+        .then(limitRes => setCopilotLimitInfo(limitRes.data))
+        .catch(console.error);
     } catch (err: any) {
       console.error(err);
       const msg = err.response?.data?.error?.message || err.response?.data?.error || err.message;
@@ -225,8 +248,8 @@ export function ResultCard({ result }: ResultCardProps) {
               </div>
             </div>
 
-            {/* If user is FREE, render lock overlay */}
-            {!isPro ? (
+            {/* If user is FREE and has run out of free uses, render lock overlay */}
+            {isCopilotLocked ? (
               <div className="relative p-6 bg-card/10 border border-dashed border-border/80 rounded-2xl flex flex-col items-center justify-center text-center space-y-4">
                 <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] rounded-2xl flex flex-col items-center justify-center p-4">
                   <div className="w-12 h-12 bg-primary/10 border border-primary/20 text-primary rounded-2xl flex items-center justify-center mb-3 animate-bounce">
@@ -345,6 +368,17 @@ export function ResultCard({ result }: ResultCardProps) {
                         🚀 Fazer Upgrade para PRO Ilimitado
                       </a>
                     )}
+                  </div>
+                )}
+                {copilotLimitInfo && !copilotLimitInfo.isPro && (
+                  <div className="text-[10px] text-muted-foreground/80 font-bold bg-secondary/40 border border-border/40 px-3.5 py-2.5 rounded-xl flex items-center justify-between gap-1.5 w-full">
+                    <span className="flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-primary shrink-0 animate-pulse" />
+                      Testes Gratuitos do Copiloto IA Restantes:
+                    </span>
+                    <span className="bg-primary/10 text-primary px-2.5 py-0.5 rounded-lg text-xs font-black">
+                      {copilotLimitInfo.remaining} usos
+                    </span>
                   </div>
                 )}
 

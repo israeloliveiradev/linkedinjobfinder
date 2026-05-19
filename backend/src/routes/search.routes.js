@@ -32,6 +32,39 @@ router.post('/', requireAuth, validateRequest(searchSchema), (req, res, next) =>
 router.get('/expand-keywords', requireAuth, (req, res, next) => searchController.expandKeywords(req, res, next));
 router.post('/use-feature', requireAuth, (req, res, next) => searchController.useFeature(req, res, next));
 
+router.get('/copilot-limit', requireAuth, async (req, res) => {
+  try {
+    const { data: config } = await supabase
+      .from('admin_config')
+      .select('free_copilot_limit')
+      .eq('id', 1)
+      .single();
+      
+    const freeCopilotLimit = config && config.free_copilot_limit !== undefined ? config.free_copilot_limit : 2;
+
+    const { data: sub } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .single();
+
+    const isPro = sub && sub.status === 'pro' && (!sub.expires_at || new Date(sub.expires_at) > new Date());
+    const copilotCount = sub?.copilot_count || 0;
+    const extraCredits = sub?.extra_copilot_credits || 0;
+    const allowedRuns = freeCopilotLimit + extraCredits;
+
+    res.json({
+      isPro,
+      copilotCount,
+      extraCredits,
+      allowedRuns,
+      remaining: isPro ? 999999 : Math.max(0, allowedRuns - copilotCount)
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 router.post('/copilot', requireAuth, async (req, res) => {
   try {
     const { resumeText, jobDescription, keywords } = req.body;
