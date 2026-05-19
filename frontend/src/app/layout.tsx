@@ -18,13 +18,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  // Substitua pelo seu ID de Medição (G-XXXXXXXXXX) ou configure a variável NEXT_PUBLIC_GA_ID no seu painel da Vercel
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX";
 
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen bg-background text-foreground antialiased`} suppressHydrationWarning>
-        {/* Google Analytics Integration */}
-        {gaId && (
+      <head>
+        {gaId && gaId !== "G-XXXXXXXXXX" && (
           <>
             <Script
               strategy="afterInteractive"
@@ -46,6 +46,8 @@ export default function RootLayout({
             />
           </>
         )}
+      </head>
+      <body className={`${inter.className} min-h-screen bg-background text-foreground antialiased`} suppressHydrationWarning>
         <Providers>
           <Header />
           {children}
