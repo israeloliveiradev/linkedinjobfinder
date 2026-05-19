@@ -101,7 +101,7 @@ export class SearchController {
       let booleanQuery = parsedParams.keywords;
 
       if (shouldExpand) {
-        const expansion = await this.keywordService.expand(parsedParams.keywords);
+        const expansion = await this.keywordService.expand(parsedParams.keywords, parsedParams.location);
         expandedKeywords = expansion.variations;
         booleanQuery = expansion.booleanQuery;
       }

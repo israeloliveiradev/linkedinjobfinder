@@ -33,6 +33,16 @@ export const LOCATION_OPTIONS = [
   { label: '🌎 Brasil (Todo o País)', value: 'brasil' },
   { label: '🌐 Remoto (Qualquer Lugar)', value: 'remoto' },
 
+  // Divider group - Países (Internacional)
+  { label: '── Países (Internacional) ──', value: '', disabled: true },
+  { label: '🇺🇸 Estados Unidos', value: 'estados unidos' },
+  { label: '🇵🇹 Portugal', value: 'portugal' },
+  { label: '🇨🇦 Canadá', value: 'canada' },
+  { label: '🇬🇧 Reino Unido (UK)', value: 'reino unido' },
+  { label: '🇮🇪 Irlanda', value: 'irlanda' },
+  { label: '🇩🇪 Alemanha', value: 'alemanha' },
+  { label: '🇪🇸 Espanha', value: 'espanha' },
+
   // Divider group - Principais Capitais
   { label: '── Capitais ──', value: '', disabled: true },
   { label: '📍 São Paulo, SP', value: 'sao paulo' },

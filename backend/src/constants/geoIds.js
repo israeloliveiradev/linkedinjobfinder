@@ -93,4 +93,5 @@ export const GEO_IDS = {
   netherlands: '102890719',
   suecia: '105117694',
   sweden: '105117694',
+  portugal: '104116203',
 };
