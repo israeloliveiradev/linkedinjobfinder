@@ -153,7 +153,8 @@ export function ResultCard({ result }: ResultCardProps) {
       setCopilotResult(res.data);
     } catch (err: any) {
       console.error(err);
-      setCopilotError(err.response?.data?.error || 'Não foi possível conectar com o Copiloto.');
+      const msg = err.response?.data?.error?.message || err.response?.data?.error || err.message;
+      setCopilotError(typeof msg === 'string' ? msg : 'Não foi possível conectar com o Copiloto.');
     } finally {
       setCopilotLoading(false);
     }

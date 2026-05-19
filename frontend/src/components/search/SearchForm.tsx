@@ -27,6 +27,11 @@ export function SearchForm() {
       return;
     }
 
+    if (query.trim().length < 3) {
+      setError('Por favor, digite um cargo ou palavra-chave com pelo menos 3 caracteres.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -35,13 +40,25 @@ export function SearchForm() {
         setResult(response.data);
       } else {
         if (response.error?.message?.includes('LIMITE_ATINGIDO')) {
-           setError('Limite de buscas atingido. Faça o Upgrade para o plano Pro!');
+          setError('Limite de buscas atingido. Faça o Upgrade para o plano Pro!');
         } else {
-           setError(response.error?.message || 'Erro ao processar busca');
+          setError(response.error?.message || 'Erro ao processar busca');
         }
       }
     } catch (err: any) {
-      const msg = err.response?.data?.error?.message || err.message;
+      const errorObj = err.response?.data?.error;
+      let msg = errorObj?.message || err.message;
+      
+      // If backend validation has detailed fields, show them in a friendly format
+      if (errorObj?.details && Array.isArray(errorObj.details) && errorObj.details.length > 0) {
+        const firstDetail = errorObj.details[0];
+        if (firstDetail.field === 'query') {
+          msg = 'A palavra-chave de busca precisa ter pelo menos 3 caracteres.';
+        } else if (firstDetail.message) {
+          msg = firstDetail.message.replace(/"/g, ''); // Clean quotes for dry Joi texts
+        }
+      }
+
       if (msg?.includes('LIMITE_ATINGIDO')) {
         setError('Limite de buscas atingido. Faça o Upgrade para o plano Pro!');
       } else if (err.response?.status === 401) {
