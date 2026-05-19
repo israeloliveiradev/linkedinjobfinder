@@ -58,7 +58,7 @@ export class SearchController {
         - Remoto (Global): 92000000
         - Se for outra cidade, tente inferir ou use 106057199 (Brasil).
 
-        Além dos parâmetros, você deve gerar uma dica de recrutamento sênior de 1 a 2 sentenças para o usuário se destacar para esta busca específica (ex: qual tecnologia complementar focar, como ajustar o currículo). Retorne no campo "recruiterAdvice".
+        Além dos parâmetros, você deve gerar uma dica de recrutamento sênior de 1 a 2 sentenças para o usuário se destacar para esta busca específica (ex: qual competência ou conhecimento complementar focar, como ajustar o currículo). Retorne no campo "recruiterAdvice".
 
         Retorne APENAS JSON válido no formato:
         {

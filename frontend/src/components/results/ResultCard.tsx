@@ -622,7 +622,7 @@ export function ResultCard({ result }: ResultCardProps) {
                 📬 Vagas Ocultas no Feed (Filtros Fallback)
               </span>
               <p className="text-[12px] text-muted-foreground leading-relaxed">
-                Muitos gestores de startups e empresas de tecnologia postam vagas diretamente em suas redes pessoais para economizar nos custos formais do LinkedIn Recruiter. Use os botões abaixo para garimpar essas postagens valiosas e falar direto com quem contrata!
+                Muitos gestores de diversas empresas e setores postam vagas diretamente em suas redes pessoais para economizar nos custos formais do LinkedIn Recruiter. Use os botões abaixo para garimpar essas postagens valiosas e falar direto com quem contrata!
               </p>
             </div>
  
