@@ -491,49 +491,51 @@ export function ResultCard({ result }: ResultCardProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-6">
               {/* Cargos alternativos da IA */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
-                    🔎 Mapeamento Semântico de Cargos
-                  </h3>
-                  <button 
-                    type="button"
-                    onClick={() => setShowCargoInfo(!showCargoInfo)}
-                    className="p-1 hover:bg-secondary rounded-lg text-muted-foreground hover:text-foreground transition-all cursor-pointer"
-                    title="O que é isso?"
-                  >
-                    <Info className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                {showCargoInfo && (
-                  <div className="p-4 bg-secondary/60 border border-border/80 rounded-2xl text-xs text-muted-foreground leading-relaxed animate-in fade-in slide-in-from-top-1 duration-200">
-                    📌 <strong>Por que tantas variações?</strong> O motor de vagas.rankia.cloud analisa o cargo digitado e expande automaticamente a pesquisa com sinônimos e equivalentes de mercado (inclusive em inglês). 
-                    <br />
-                    <span className="text-foreground font-semibold">Todas elas são usadas simultaneamente</span> na mesma consulta para mapear 100% das vagas disponíveis, garantindo que você não perca nenhuma oportunidade só porque o recrutador cadastrou a vaga sob um nome alternativo.
-                  </div>
-                )}
-
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-3.5 py-1.5 bg-secondary/80 rounded-xl text-xs font-extrabold border border-border/80 text-foreground">
-                    {result.parsedParams.keywords}
-                  </span>
-                  {result.expandedKeywords && result.expandedKeywords.length > 0 ? (
-                    result.expandedKeywords.map((kw, i) => (
-                      <span key={i} className="px-3.5 py-1.5 bg-secondary/20 text-foreground/80 rounded-xl text-xs border border-white/5 font-extrabold">
-                        {kw}
-                      </span>
-                    ))
-                  ) : (
+              {result.parsedParams.expandKeywords !== false && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+                      🔎 Mapeamento Semântico de Cargos
+                    </h3>
                     <button 
-                      onClick={() => router.push('/upgrade')}
-                      className="px-3.5 py-1.5 bg-secondary/10 hover:bg-primary/5 hover:border-primary/30 text-muted-foreground/60 hover:text-primary rounded-xl text-xs border border-dashed border-border/80 font-bold transition-all cursor-pointer"
+                      type="button"
+                      onClick={() => setShowCargoInfo(!showCargoInfo)}
+                      className="p-1 hover:bg-secondary rounded-lg text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+                      title="O que é isso?"
                     >
-                      🔒 Desbloquear 10 sinônimos de cargos (PRO)
+                      <Info className="w-3.5 h-3.5" />
                     </button>
+                  </div>
+
+                  {showCargoInfo && (
+                    <div className="p-4 bg-secondary/60 border border-border/80 rounded-2xl text-xs text-muted-foreground leading-relaxed animate-in fade-in slide-in-from-top-1 duration-200">
+                      📌 <strong>Por que tantas variações?</strong> O motor de vagas.rankia.cloud analisa o cargo digitado e expande automaticamente a pesquisa com sinônimos e equivalentes de mercado (inclusive em inglês). 
+                      <br />
+                      <span className="text-foreground font-semibold">Todas elas são usadas simultaneamente</span> na mesma consulta para mapear 100% das vagas disponíveis, garantindo que você não perca nenhuma oportunidade só porque o recrutador cadastrou a vaga sob um nome alternativo.
+                    </div>
                   )}
+
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3.5 py-1.5 bg-secondary/80 rounded-xl text-xs font-extrabold border border-border/80 text-foreground">
+                      {result.parsedParams.keywords}
+                    </span>
+                    {result.expandedKeywords && result.expandedKeywords.length > 0 ? (
+                      result.expandedKeywords.map((kw, i) => (
+                        <span key={i} className="px-3.5 py-1.5 bg-secondary/20 text-foreground/80 rounded-xl text-xs border border-white/5 font-extrabold">
+                          {kw}
+                        </span>
+                      ))
+                    ) : (
+                      <button 
+                        onClick={() => router.push('/upgrade')}
+                        className="px-3.5 py-1.5 bg-secondary/10 hover:bg-primary/5 hover:border-primary/30 text-muted-foreground/60 hover:text-primary rounded-xl text-xs border border-dashed border-border/80 font-bold transition-all cursor-pointer"
+                      >
+                        🔒 Desbloquear 10 sinônimos de cargos (PRO)
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-2.5">Filtros de Localização</h3>

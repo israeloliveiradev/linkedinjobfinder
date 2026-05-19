@@ -82,6 +82,7 @@ export class SearchController {
       ], { json: true });
 
       let parsedParams = extractJsonFromString(parseResponse) || {};
+      parsedParams.expandKeywords = shouldExpand;
 
       // 2. Merge Manual Filters (Overrides)
       if (manualFilters) {
