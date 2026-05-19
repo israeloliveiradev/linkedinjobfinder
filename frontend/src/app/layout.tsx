@@ -3,14 +3,15 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import { Header } from "@/components/layout/Header";
 import { Providers } from "./providers";
-
+import { WhatsAppSupport } from "@/components/layout/WhatsAppSupport";
+ 
 const inter = Inter({ subsets: ["latin"] });
-
+ 
 export const metadata: Metadata = {
   title: "vagas.rankia.cloud | Localizador de Vagas de Elite",
   description: "Mapeie e encontre as melhores vagas no LinkedIn de forma cirúrgica e direta.",
 };
-
+ 
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,6 +23,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           {children}
+          <WhatsAppSupport />
         </Providers>
       </body>
     </html>
