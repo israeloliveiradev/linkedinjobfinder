@@ -12,6 +12,7 @@ export interface ParsedParams {
   lowApplicants: boolean;
   company: string | null;
   recruiterAdvice?: string;
+  expandKeywords?: boolean;
 }
 
 export interface SearchResult {
