@@ -43,7 +43,7 @@ export default function UpgradePage() {
           Multiplique suas Entrevistas com o <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Acesso PRO</span>
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto animate-in fade-in slide-in-from-top-6 duration-600">
-          Varra o LinkedIn sem limites de cotas, garimpe vagas ocultas nos feeds dos recrutadores e conte com o Copiloto de I.A. para otimizar seu currículo e gerar abordagens irresistíveis.
+          Varra o LinkedIn sem limites de cotas, garimpe vagas ocultas nos feeds dos recrutadores e conte com o Copiloto de I.A. para otimizar seu currículo para os filtros do ATS.
         </p>
       </div>
 
