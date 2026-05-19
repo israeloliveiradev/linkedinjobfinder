@@ -2,10 +2,11 @@ import { config } from './env.js';
 
 const allowedOrigins = [
   config.allowedOrigin,
+  'https://vagas.rankia.cloud',
   'http://localhost:3000',
   'http://127.0.0.1:3000'
-];
-
+].filter(Boolean);
+ 
 export const corsOptions = {
   origin: (origin, callback) => {
     // Permitir requisições sem origin (como mobile apps ou curl)
@@ -18,6 +19,5 @@ export const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
