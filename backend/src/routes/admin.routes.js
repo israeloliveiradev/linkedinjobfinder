@@ -61,7 +61,7 @@ router.get('/config', async (req, res) => {
 
 // Update config (Admin only)
 router.put('/config', requireAdmin, async (req, res) => {
-  const { pix_key, qr_code_url, pro_price, pro_price_mensal, pro_price_trimestral, pro_price_semestral, free_limit, whatsapp_number } = req.body;
+  const { pix_key, qr_code_url, pro_price, pro_price_mensal, pro_price_trimestral, pro_price_semestral, free_limit, free_copilot_limit, whatsapp_number } = req.body;
   const { data, error } = await supabase
     .from('admin_config')
     .update({ 
@@ -72,6 +72,7 @@ router.put('/config', requireAdmin, async (req, res) => {
       pro_price_trimestral, 
       pro_price_semestral, 
       free_limit, 
+      free_copilot_limit,
       whatsapp_number, 
       updated_at: new Date() 
     })
@@ -94,18 +95,35 @@ router.get('/users', requireAdmin, async (req, res) => {
     
     const { data: subs, error: subsError } = await supabase
       .from('subscriptions')
-      .select('user_id, status, expires_at');
+      .select('*');
       
     if (subsError) return res.status(500).json({ error: subsError.message });
     
-    const subMap = new Map(subs.map(s => [s.user_id, { status: s.status, expiresAt: s.expires_at }]));
+    const subMap = new Map(subs.map(s => [s.user_id, s]));
     
     const usersWithPlan = users.map(u => {
-      const sub = subMap.get(u.id) || { status: 'free', expiresAt: null };
+      const sub = subMap.get(u.id) || { 
+        status: 'free', 
+        expires_at: null,
+        search_count: 0,
+        copilot_count: 0,
+        extra_copilot_credits: 0,
+        used_express: false,
+        used_posts_vaga: false,
+        used_posts_hiring: false,
+        used_posts_curriculo: false
+      };
       return {
         ...u,
         planStatus: sub.status,
-        expiresAt: sub.expiresAt
+        expiresAt: sub.expires_at,
+        searchCount: sub.search_count || 0,
+        copilotCount: sub.copilot_count || 0,
+        extraCopilotCredits: sub.extra_copilot_credits || 0,
+        usedExpress: sub.used_express || false,
+        usedPostsVaga: sub.used_posts_vaga || false,
+        usedPostsHiring: sub.used_posts_hiring || false,
+        usedPostsCurriculo: sub.used_posts_curriculo || false
       };
     });
     
@@ -150,6 +168,68 @@ router.put('/users/:userId/plan', requireAdmin, async (req, res) => {
       
     if (error) return res.status(500).json({ error: error.message });
     res.json(data[0]);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Grant extra feature permissions to a specific user (Admin only)
+router.post('/users/:userId/unlock', requireAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { feature } = req.body; // 'copilot', 'express', 'feed'
+    
+    // Fetch current user subscription
+    const { data: sub, error: subError } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+      
+    if (subError && subError.code !== 'PGRST116') {
+      return res.status(500).json({ error: subError.message });
+    }
+    
+    const currentSub = sub || { 
+      user_id: userId, 
+      status: 'free', 
+      search_count: 0, 
+      copilot_count: 0, 
+      extra_copilot_credits: 0,
+      extra_express_credits: 0,
+      used_express: false, 
+      used_posts_vaga: false, 
+      used_posts_hiring: false, 
+      used_posts_curriculo: false 
+    };
+    
+    let updates = {};
+    if (feature === 'copilot') {
+      updates = {
+        extra_copilot_credits: (currentSub.extra_copilot_credits || 0) + 1,
+        copilot_count: Math.max(0, (currentSub.copilot_count || 0) - 1) // Give immediate run credit too
+      };
+    } else if (feature === 'express') {
+      updates = {
+        used_express: false
+      };
+    } else if (feature === 'feed') {
+      updates = {
+        used_posts_vaga: false,
+        used_posts_hiring: false,
+        used_posts_curriculo: false
+      };
+    } else {
+      return res.status(400).json({ error: 'Funcionalidade inválida' });
+    }
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .upsert({ ...currentSub, ...updates, user_id: userId })
+      .select();
+      
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ success: true, message: `Permissão liberada com sucesso!`, data: data[0] });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

@@ -21,9 +21,9 @@ const historyService = new HistoryService(historyRepository);
 const subscriptionService = new SubscriptionService();
 
 const searchController = new SearchController(
-  llmService, 
-  urlBuilderService, 
-  keywordService, 
+  llmService,
+  urlBuilderService,
+  keywordService,
   historyService,
   subscriptionService
 );
@@ -38,20 +38,40 @@ router.post('/copilot', requireAuth, async (req, res) => {
     if (!resumeText || !jobDescription) {
       return res.status(400).json({ error: 'Os campos de currículo e descrição de vaga são obrigatórios.' });
     }
-    
+
+    // Fetch global config for copilot limits
+    const { data: config } = await supabase
+      .from('admin_config')
+      .select('free_copilot_limit')
+      .eq('id', 1)
+      .single();
+      
+    const freeCopilotLimit = config && config.free_copilot_limit !== undefined ? config.free_copilot_limit : 2;
+
     // Check user subscription in database
     const { data: sub } = await supabase
       .from('subscriptions')
       .select('*')
       .eq('user_id', req.user.id)
       .single();
-      
+
     const isPro = sub && sub.status === 'pro' && (!sub.expires_at || new Date(sub.expires_at) > new Date());
-    
+
     if (!isPro) {
-      return res.status(403).json({ error: 'Acesso negado: o Copiloto de Abordagem é um recurso exclusivo do plano PRO.' });
+      const copilotCount = sub?.copilot_count || 0;
+      const extraCredits = sub?.extra_copilot_credits || 0;
+      const allowedRuns = freeCopilotLimit + extraCredits;
+
+      if (copilotCount >= allowedRuns) {
+        return res.status(403).json({ 
+          error: 'Limite gratuito excedido: o Copiloto de IA é exclusivo do plano PRO.',
+          limitExceeded: true,
+          allowedRuns,
+          copilotCount
+        });
+      }
     }
-    
+
     // Call LLM for resume matching & ATS keyword checking
     const systemPrompt = `Você é o Copiloto de Carreira da Vagas Rankia, um assistente de I.A. especializado em acelerar candidaturas e otimizar currículos no LinkedIn para profissionais de todas as áreas.
 Sua tarefa é analisar o currículo do candidato e a descrição da vaga fornecida para retornar um objeto JSON contendo análise de palavras-chave, match score de 0 a 100% e dicas de otimização ATS.
@@ -78,9 +98,9 @@ ${keywords || 'Desenvolvedor'}`;
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
     ];
-    
+
     const response = await llmService.chat(messages, { json: true, temperature: 0.2 });
-    
+
     let parsed;
     try {
       parsed = JSON.parse(response);
@@ -92,7 +112,24 @@ ${keywords || 'Desenvolvedor'}`;
         throw new Error('Falha ao decodificar a resposta da I.A. em JSON.');
       }
     }
-    
+
+    // Increment copilot run count if the user is on the free plan
+    if (!isPro) {
+      const currentCount = sub?.copilot_count || 0;
+      await supabase
+        .from('subscriptions')
+        .upsert({
+          user_id: req.user.id,
+          copilot_count: currentCount + 1,
+          status: sub?.status || 'free',
+          search_count: sub?.search_count || 0,
+          used_express: sub?.used_express || false,
+          used_posts_vaga: sub?.used_posts_vaga || false,
+          used_posts_hiring: sub?.used_posts_hiring || false,
+          used_posts_curriculo: sub?.used_posts_curriculo || false
+        });
+    }
+
     res.json(parsed);
   } catch (e) {
     console.error('[Copilot Error]', e.message);

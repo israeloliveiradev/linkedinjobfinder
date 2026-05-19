@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS admin_config (
     pro_price_trimestral DECIMAL(10,2) NOT NULL DEFAULT 25.90,
     pro_price_semestral DECIMAL(10,2) NOT NULL DEFAULT 29.90,
     free_limit INTEGER NOT NULL DEFAULT 5,
+    free_copilot_limit INTEGER NOT NULL DEFAULT 2,
     whatsapp_number TEXT NOT NULL DEFAULT '',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -101,6 +102,7 @@ ALTER TABLE admin_config ADD COLUMN IF NOT EXISTS whatsapp_number TEXT NOT NULL 
 ALTER TABLE admin_config ADD COLUMN IF NOT EXISTS pro_price_semestral DECIMAL(10,2) NOT NULL DEFAULT 29.90;
 ALTER TABLE admin_config ADD COLUMN IF NOT EXISTS pro_price_mensal DECIMAL(10,2) NOT NULL DEFAULT 10.90;
 ALTER TABLE admin_config ADD COLUMN IF NOT EXISTS pro_price_trimestral DECIMAL(10,2) NOT NULL DEFAULT 25.90;
+ALTER TABLE admin_config ADD COLUMN IF NOT EXISTS free_copilot_limit INTEGER NOT NULL DEFAULT 2;
 
 -- Inserir configuração padrão caso não exista
 INSERT INTO admin_config (id) VALUES (1) ON CONFLICT DO NOTHING;
@@ -111,6 +113,9 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     user_id TEXT PRIMARY KEY,
     status TEXT NOT NULL DEFAULT 'free',
     search_count INTEGER NOT NULL DEFAULT 0,
+    copilot_count INTEGER NOT NULL DEFAULT 0,
+    extra_copilot_credits INTEGER NOT NULL DEFAULT 0,
+    extra_express_credits INTEGER NOT NULL DEFAULT 0,
     expires_at TIMESTAMP WITH TIME ZONE,
     reset_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     used_express BOOLEAN NOT NULL DEFAULT false,
@@ -120,6 +125,9 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 );
 
 ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS copilot_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS extra_copilot_credits INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS extra_express_credits INTEGER NOT NULL DEFAULT 0;
 
 -- Currículos dos candidatos (Biblioteca de Currículos PRO)
 CREATE TABLE IF NOT EXISTS user_resumes (

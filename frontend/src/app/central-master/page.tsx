@@ -8,7 +8,7 @@ import api from '@/lib/axios';
 
 export default function CentralMasterPage() {
   const { data: session, isPending } = useSession();
-  const [config, setConfig] = useState<any>({ pix_key: '', qr_code_url: '', pro_price: 49.90, pro_price_mensal: 10.90, pro_price_trimestral: 25.90, pro_price_semestral: 29.90, free_limit: 5, whatsapp_number: '', isAdmin: false });
+  const [config, setConfig] = useState<any>({ pix_key: '', qr_code_url: '', pro_price: 49.90, pro_price_mensal: 10.90, pro_price_trimestral: 25.90, pro_price_semestral: 29.90, free_limit: 5, free_copilot_limit: 2, whatsapp_number: '', isAdmin: false });
   const [users, setUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [history, setHistory] = useState<any[]>([]);
@@ -111,6 +111,17 @@ export default function CentralMasterPage() {
       alert('Erro de conexão ao alterar plano');
     } finally {
       setUpdatingUser(null);
+    }
+  };
+
+  const handleUnlockFeature = async (userId: string, feature: 'copilot' | 'express' | 'feed') => {
+    try {
+      const res = await api.post(`/api/admin/users/${userId}/unlock`, { feature });
+      alert(res.data.message || 'Permissão liberada com absoluto sucesso!');
+      fetchUsers();
+    } catch (e: any) {
+      console.error(e);
+      alert(e.response?.data?.error || 'Erro de conexão ao liberar recurso');
     }
   };
 
@@ -327,16 +338,29 @@ export default function CentralMasterPage() {
                   />
                 </div>
 
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                     <Sliders className="w-3 h-3 text-amber-500" />
-                    Free Tier (Buscas do Teste Grátis)
+                    Free Tier (Limite de Buscas)
                   </label>
                   <input 
                     type="number"
                     className="flex h-10 w-full rounded-xl border border-border bg-card/50 px-2.5 py-1 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent outline-none transition-all"
                     value={config.free_limit || 0} 
                     onChange={e => setConfig({...config, free_limit: parseInt(e.target.value)})} 
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-purple-500" />
+                    Limite Copiloto Grátis
+                  </label>
+                  <input 
+                    type="number"
+                    className="flex h-10 w-full rounded-xl border border-border bg-card/50 px-2.5 py-1 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent outline-none transition-all"
+                    value={config.free_copilot_limit !== undefined ? config.free_copilot_limit : 2} 
+                    onChange={e => setConfig({...config, free_copilot_limit: parseInt(e.target.value)})} 
                   />
                 </div>
               </div>
@@ -562,24 +586,81 @@ export default function CentralMasterPage() {
                       <p className="text-[9px] text-muted-foreground/60">
                         Cadastro: {new Date(u.createdAt).toLocaleDateString('pt-BR')}
                       </p>
+
+                      {/* Quota Telemetry Details */}
+                      <div className="bg-secondary/20 p-2.5 rounded-xl border border-border/40 text-[10px] space-y-1 my-1">
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span>Buscas Feitas:</span>
+                          <span className="font-bold text-foreground">{u.searchCount || 0} / {config.free_limit}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span>Copiloto IA:</span>
+                          <span className="font-bold text-foreground">
+                            {u.copilotCount || 0} / {(config.free_copilot_limit || 2) + (u.extraCopilotCredits || 0)}
+                            {u.extraCopilotCredits > 0 && <span className="text-primary font-black ml-1">({u.extraCopilotCredits} extra)</span>}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span>Express Utilizado?</span>
+                          <span className={`font-bold ${u.usedExpress ? 'text-amber-500' : 'text-green-500'}`}>
+                            {u.usedExpress ? 'Sim (Bloqueado)' : 'Não (Livre)'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span>Vagas Ocultas Feed?</span>
+                          <span className={`font-bold ${u.usedPostsVaga || u.usedPostsHiring || u.usedPostsCurriculo ? 'text-amber-500' : 'text-green-500'}`}>
+                            {u.usedPostsVaga || u.usedPostsHiring || u.usedPostsCurriculo ? 'Sim (Bloqueado)' : 'Não (Livre)'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
-                    <button
-                      onClick={() => handleToggleUserPlan(u.id, u.planStatus)}
-                      disabled={updatingUser === u.id}
-                      className={`h-9 w-full inline-flex items-center justify-center rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                        u.planStatus === 'pro'
-                          ? 'bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-white'
-                          : 'bg-green-500/10 text-green-600 border border-green-500/20 hover:bg-green-500 hover:text-white'
-                      } disabled:opacity-50`}
-                    >
-                      {updatingUser === u.id 
-                        ? 'Processando...' 
-                        : u.planStatus === 'pro' 
-                          ? 'Rebaixar para Free' 
-                          : 'Conceder Acesso PRO'
-                      }
-                    </button>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => handleToggleUserPlan(u.id, u.planStatus)}
+                        disabled={updatingUser === u.id}
+                        className={`h-9 w-full inline-flex items-center justify-center rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
+                          u.planStatus === 'pro'
+                            ? 'bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-white'
+                            : 'bg-green-500/10 text-green-600 border border-green-500/20 hover:bg-green-500 hover:text-white'
+                        } disabled:opacity-50`}
+                      >
+                        {updatingUser === u.id 
+                          ? 'Processando...' 
+                          : u.planStatus === 'pro' 
+                            ? 'Rebaixar para Free' 
+                            : 'Conceder Acesso PRO'
+                        }
+                      </button>
+
+                      {/* Custom Permission Unlock Buttons */}
+                      <div className="grid grid-cols-3 gap-1.5 pt-1">
+                        <button
+                          onClick={() => handleUnlockFeature(u.id, 'copilot')}
+                          className="h-8 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[9px] border border-primary/20 transition-all cursor-pointer flex items-center justify-center gap-1"
+                          title="Liberar +1 uso do Copiloto de IA"
+                        >
+                          <Sparkles className="w-2.5 h-2.5" />
+                          +1 Copiloto
+                        </button>
+                        <button
+                          onClick={() => handleUnlockFeature(u.id, 'express')}
+                          className="h-8 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 font-bold text-[9px] border border-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-1"
+                          title="Resetar bloqueio e liberar mais 1 clique no Express"
+                        >
+                          <Sliders className="w-2.5 h-2.5" />
+                          Lib Express
+                        </button>
+                        <button
+                          onClick={() => handleUnlockFeature(u.id, 'feed')}
+                          className="h-8 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 font-bold text-[9px] border border-green-500/20 transition-all cursor-pointer flex items-center justify-center gap-1"
+                          title="Resetar bloqueios e liberar acessos ao Feed de Vagas Ocultas"
+                        >
+                          <Activity className="w-2.5 h-2.5" />
+                          Lib Feed
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ))}
             </div>

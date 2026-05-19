@@ -204,35 +204,7 @@ export function ResultCard({ result }: ResultCardProps) {
             </div>
           </div>
 
-          {/* AI Recruiter Advisor box */}
-          {result.parsedParams.recruiterAdvice ? (
-            <div className="flex gap-4 p-5 bg-secondary/20 border border-border/80 rounded-2xl text-foreground text-sm animate-in fade-in duration-300">
-              <div className="bg-primary/10 p-2.5 rounded-xl h-fit border border-primary/20 text-primary">
-                <Activity className="w-5 h-5" />
-              </div>
-              <div className="space-y-1">
-                <span className="font-black text-xs uppercase text-primary tracking-wider block">Análise de Mercado & Recomendação</span>
-                <p className="text-muted-foreground leading-relaxed text-[13px]">{result.parsedParams.recruiterAdvice}</p>
-              </div>
-            </div>
-          ) : (
-            <div 
-              onClick={() => router.push('/upgrade')}
-              className="flex gap-4 p-5 bg-secondary/10 border border-dashed border-border/80 hover:border-primary/50 transition-all rounded-2xl text-foreground text-sm cursor-pointer group animate-in fade-in duration-300"
-            >
-              <div className="bg-secondary/40 p-2.5 rounded-xl h-fit border border-border text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors">
-                <Lock className="w-5 h-5" />
-              </div>
-              <div className="space-y-1 flex-1">
-                <span className="font-black text-xs uppercase text-muted-foreground group-hover:text-primary tracking-wider block transition-colors">
-                  🔒 Dica do Recrutador IA (Apenas Plano PRO)
-                </span>
-                <p className="text-muted-foreground leading-relaxed text-[12px]">
-                  Assinantes PRO recebem análises de mercado detalhadas e recomendações estratégicas exclusivas e automatizadas geradas pela IA para se destacar nos processos seletivos desta busca. <span className="text-primary font-bold hover:underline">Clique para fazer o upgrade.</span>
-                </p>
-              </div>
-            </div>
-          )}
+
 
           {/* AI Job Matcher & Pitch Copilot Container */}
           <div className="glass p-6 rounded-3xl border border-border/60 shadow-lg space-y-6 relative overflow-hidden">
@@ -360,9 +332,19 @@ export function ResultCard({ result }: ResultCardProps) {
                 </div>
 
                 {copilotError && (
-                  <div className="p-3.5 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-2.5 text-xs font-semibold animate-shake">
-                    <AlertCircle className="w-4 h-4" />
-                    <span>{copilotError}</span>
+                  <div className="p-3.5 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex flex-col gap-2 text-xs font-semibold animate-shake">
+                    <div className="flex items-center gap-2.5">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{copilotError}</span>
+                    </div>
+                    {copilotError.includes('Limite gratuito') && (
+                      <a 
+                        href="/upgrade" 
+                        className="mt-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-destructive text-white rounded-lg font-bold text-[10px] uppercase tracking-wider hover:brightness-110 transition-all self-start cursor-pointer"
+                      >
+                        🚀 Fazer Upgrade para PRO Ilimitado
+                      </a>
+                    )}
                   </div>
                 )}
 
