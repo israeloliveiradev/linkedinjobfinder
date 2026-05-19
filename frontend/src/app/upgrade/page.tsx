@@ -8,13 +8,20 @@ import api from '@/lib/axios';
 
 export default function UpgradePage() {
   const [config, setConfig] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(true);
   const [billingPeriod, setBillingPeriod] = useState<'mensal' | 'trimestral'>('mensal');
   const { data: session } = useSession();
 
   useEffect(() => {
     api.get('/api/admin/config')
-      .then(res => setConfig(res.data))
-      .catch(console.error);
+      .then(res => {
+        setConfig(res.data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setIsLoading(false);
+      });
   }, []);
 
   const userEmail = session?.user?.email || '';
@@ -115,9 +122,13 @@ export default function UpgradePage() {
             <div className="border-y border-border/50 py-4 my-2">
               <span className="text-4xl font-black text-foreground">
                 R$ {
-                  billingPeriod === 'mensal' 
-                    ? (config.pro_price_mensal || '10,90') 
-                    : (config.pro_price_trimestral || '25,90')
+                  isLoading ? (
+                    <span className="inline-block w-24 h-9 bg-muted/65 animate-pulse rounded-xl align-middle" />
+                  ) : (
+                    billingPeriod === 'mensal' 
+                      ? (config.pro_price_mensal || '19,90') 
+                      : (config.pro_price_trimestral || '49,90')
+                  )
                 }
               </span>
               <span className="text-xs text-muted-foreground font-semibold">
@@ -152,15 +163,25 @@ export default function UpgradePage() {
                 <QrCode className="w-4 h-4 text-primary" />
                 Escaneie para pagar via PIX
               </div>
-              {config.qr_code_url ? (
+              {isLoading ? (
+                <div className="w-44 h-44 mx-auto bg-card/65 flex items-center justify-center rounded-2xl border border-dashed border-border/80 animate-pulse">
+                  <QrCode className="w-10 h-10 text-muted-foreground/30" />
+                </div>
+              ) : config.qr_code_url ? (
                 <img src={config.qr_code_url} alt="QR Code Pix" className="w-44 h-44 mx-auto rounded-2xl object-contain border border-border bg-white p-2 shadow-sm" />
               ) : (
                 <div className="w-44 h-44 mx-auto bg-card flex items-center justify-center rounded-2xl border border-dashed border-border/80">
                   <QrCode className="w-10 h-10 text-muted-foreground/60" />
                 </div>
               )}
-              <div className="text-xs break-all bg-card/60 p-3 rounded-xl border border-border/60 text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Chave PIX:</strong> {config.pix_key || 'Configuração Pendente'}
+              <div className="text-xs break-all bg-card/60 p-3 rounded-xl border border-border/60 text-muted-foreground leading-relaxed min-h-11 flex items-center justify-center">
+                {isLoading ? (
+                  <span className="inline-block w-48 h-4 bg-muted/65 animate-pulse rounded" />
+                ) : (
+                  <>
+                    <strong className="text-foreground mr-1">Chave PIX:</strong> {config.pix_key || 'Configuração Pendente'}
+                  </>
+                )}
               </div>
             </div>
           </div>
