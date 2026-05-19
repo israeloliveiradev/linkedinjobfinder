@@ -148,8 +148,13 @@ export function ResultCard({ result }: ResultCardProps) {
       await presetService.savePreset(name, result.parsedParams);
       setPresetSaved(true);
       setTimeout(() => setPresetSaved(false), 3000);
-    } catch (err) {
-      alert('Erro ao salvar preset');
+    } catch (err: any) {
+      const msg = err.response?.data?.error?.message || err.response?.data?.error || err.message;
+      if (typeof msg === 'string' && msg.includes('LIMITE_PRESETS:')) {
+        alert(msg.replace('LIMITE_PRESETS:', ''));
+      } else {
+        alert('Erro ao salvar preset. No plano Free, você possui um limite de 3 presets salvos. Faça o upgrade para salvar presets ilimitados ou exclua um preset existente!');
+      }
     } finally {
       setIsSavingPreset(false);
     }
