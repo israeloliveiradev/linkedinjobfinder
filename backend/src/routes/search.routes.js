@@ -53,7 +53,7 @@ router.post('/copilot', requireAuth, async (req, res) => {
     }
     
     // Call LLM for resume matching & ATS keyword checking
-    const systemPrompt = `Você é o Copiloto de Carreira da EmpregoMestre, um assistente de I.A. especializado em acelerar candidaturas e otimizar currículos no LinkedIn para profissionais de todas as áreas.
+    const systemPrompt = `Você é o Copiloto de Carreira da Vagas Rankia, um assistente de I.A. especializado em acelerar candidaturas e otimizar currículos no LinkedIn para profissionais de todas as áreas.
 Sua tarefa é analisar o currículo do candidato e a descrição da vaga fornecida para retornar um objeto JSON contendo análise de palavras-chave, match score de 0 a 100% e dicas de otimização ATS.
 
 O formato de retorno DEVE ser EXCLUSIVAMENTE um objeto JSON válido, com a seguinte estrutura de campos:
