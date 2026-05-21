@@ -51,10 +51,10 @@ export class SearchController {
 
         Instruções de Localização (GeoID):
         - Brasil: 106057199
-        - São Paulo (Estado): 104440326
-        - Rio de Janeiro (Estado): 104768393
-        - Curitiba: 105650223
-        - Belo Horizonte: 104539166
+        - São Paulo (Estado/Região Metropolitana): 105871508
+        - Rio de Janeiro (Estado/Região Metropolitana): 103658898
+        - Curitiba: 103501557
+        - Belo Horizonte: 105818291
         - Remoto (Global): 92000000
         - Se for outra cidade, tente inferir ou use 106057199 (Brasil).
 
@@ -106,11 +106,11 @@ export class SearchController {
         booleanQuery = expansion.booleanQuery;
       }
 
-      // 2.1 Process Anti-Spam and Negative Keywords
-      let finalBooleanQuery = booleanQuery;
+      // 2.1 Process Exclusions (Anti-Spam, Negative Keywords, Seniority)
+      const exclusions = [];
       
       if (manualFilters?.antiSpam) {
-        finalBooleanQuery += ' NOT "BairesDev" NOT "Crossover" NOT "Turing" NOT "GeekHunter" NOT "Belvo" NOT "Epic"';
+        exclusions.push('BairesDev', 'Crossover', 'Turing', 'GeekHunter', 'Belvo', 'Epic');
       }
 
       if (manualFilters?.negativeKeywords) {
@@ -118,16 +118,19 @@ export class SearchController {
           .split(',')
           .map(k => k.trim())
           .filter(k => k.length > 0);
-        
-        negatives.forEach(neg => {
-          finalBooleanQuery += ` NOT "${neg}"`;
-        });
+        exclusions.push(...negatives);
       }
 
       // 2.2 Exclude Seniority if experienceLevel contains Junior
       const experiences = parsedParams.experienceLevel || [];
       if (experiences.map(e => e.toLowerCase()).includes('junior')) {
-        finalBooleanQuery += ' NOT "Senior" NOT "Pleno" NOT "Sênior" NOT "Lead" NOT "Principal"';
+        exclusions.push('Senior', 'Pleno', 'Sênior', 'Lead', 'Principal');
+      }
+
+      let finalBooleanQuery = booleanQuery;
+      if (exclusions.length > 0) {
+        const groupedExclusions = exclusions.map(term => `"${term}"`).join(' OR ');
+        finalBooleanQuery = `(${finalBooleanQuery}) AND NOT (${groupedExclusions})`;
       }
 
       // Strip recruiterAdvice if user is Free (PRO feature)
