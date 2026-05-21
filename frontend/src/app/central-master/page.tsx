@@ -267,141 +267,6 @@ export default function CentralMasterPage() {
         </div>
       </div>
 
-      {/* SECTION: Social Proof Manager */}
-      <div className="glass p-6 rounded-3xl border border-border/60 shadow-lg space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/50 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-amber-500/10 p-2 rounded-xl text-amber-500">
-              <MessageSquare className="w-5 h-5 fill-amber-500/20" />
-            </div>
-            <div>
-              <h2 className="text-lg font-black text-foreground">Gerenciador de Provas Sociais</h2>
-              <p className="text-xs text-muted-foreground">Adicione, remova e edite fotos, nomes e depoimentos na página de upgrade</p>
-            </div>
-          </div>
-          <button 
-            type="button"
-            onClick={handleAddTestimonial}
-            className="inline-flex h-10 items-center gap-1.5 px-4 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/45 font-black text-xs transition-all cursor-pointer shadow-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Adicionar Depoimento
-          </button>
-        </div>
-
-        {(!config.testimonials || config.testimonials.length === 0) ? (
-          <div className="border border-dashed border-border/80 rounded-2xl p-8 text-center space-y-3">
-            <MessageSquare className="w-8 h-8 text-muted-foreground/45 mx-auto" />
-            <p className="text-xs text-muted-foreground font-semibold">Nenhuma prova social customizada configurada no momento.</p>
-            <p className="text-[10px] text-muted-foreground/60 leading-normal">
-              O sistema está utilizando os depoimentos padrões estáticos como fallback. Clique em &ldquo;Adicionar Depoimento&rdquo; para começar a customizar!
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {(config.testimonials || []).map((t: any, idx: number) => (
-              <div 
-                key={idx} 
-                className="flex flex-col justify-between p-5 bg-card/30 border border-border/60 hover:border-border rounded-2xl transition-all gap-4 relative overflow-hidden group"
-              >
-                <div className="space-y-4">
-                  {/* Card Header with Image Preview & Star Rating selector */}
-                  <div className="flex items-start gap-3">
-                    <img 
-                      src={t.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120&h=120'} 
-                      alt={t.name} 
-                      className="w-12 h-12 rounded-full object-cover border border-border shrink-0 bg-secondary"
-                      onError={(e: any) => {
-                        e.target.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120&h=120';
-                      }}
-                    />
-                    <div className="space-y-1.5 w-full">
-                      <div className="flex items-center gap-1.5">
-                        <label className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">Avaliação:</label>
-                        <select 
-                          value={t.rating || 5} 
-                          onChange={e => handleUpdateTestimonial(idx, { rating: parseInt(e.target.value) })}
-                          className="bg-secondary/60 text-[10px] font-black border border-border/40 rounded px-1.5 py-0.5 outline-none text-amber-500"
-                        >
-                          <option value={5}>⭐⭐⭐⭐⭐ 5</option>
-                          <option value={4}>⭐⭐⭐⭐ 4</option>
-                          <option value={3}>⭐⭐⭐ 3</option>
-                          <option value={2}>⭐⭐ 2</option>
-                          <option value={1}>⭐ 1</option>
-                        </select>
-                      </div>
-                      <input 
-                        className="w-full text-xs font-black bg-card/60 border border-border/50 rounded-lg px-2 py-1 outline-none text-foreground focus:border-primary"
-                        value={t.name || ''} 
-                        onChange={e => handleUpdateTestimonial(idx, { name: e.target.value })} 
-                        placeholder="Nome do Candidato"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Input Fields Grid */}
-                  <div className="space-y-3 text-[10px] leading-normal">
-                    {/* Role Input */}
-                    <div className="space-y-1">
-                      <label className="font-extrabold text-muted-foreground uppercase tracking-wider text-[8px]">Cargo / Subtítulo:</label>
-                      <input 
-                        className="w-full bg-card/60 border border-border/50 rounded-lg px-2.5 py-1.5 outline-none text-foreground focus:border-primary"
-                        value={t.role || ''} 
-                        onChange={e => handleUpdateTestimonial(idx, { role: e.target.value })} 
-                        placeholder="Ex: Desenvolvedor Backend Júnior"
-                      />
-                    </div>
-
-                    {/* Achievement Input */}
-                    <div className="space-y-1">
-                      <label className="font-extrabold text-muted-foreground uppercase tracking-wider text-[8px]">Conquista / Badge (ex: 🎉 Contratado):</label>
-                      <input 
-                        className="w-full bg-card/60 border border-border/50 rounded-lg px-2.5 py-1.5 outline-none text-foreground focus:border-primary"
-                        value={t.achievement || ''} 
-                        onChange={e => handleUpdateTestimonial(idx, { achievement: e.target.value })} 
-                        placeholder="🎉 Contratado em 12 dias"
-                      />
-                    </div>
-
-                    {/* Avatar URL Input */}
-                    <div className="space-y-1">
-                      <label className="font-extrabold text-muted-foreground uppercase tracking-wider text-[8px]">URL da Foto de Perfil (Avatar):</label>
-                      <input 
-                        className="w-full font-mono bg-card/60 border border-border/50 rounded-lg px-2.5 py-1.5 outline-none text-foreground focus:border-primary truncate text-[9px]"
-                        value={t.avatar || ''} 
-                        onChange={e => handleUpdateTestimonial(idx, { avatar: e.target.value })} 
-                        placeholder="https://..."
-                      />
-                    </div>
-
-                    {/* Feedback Area Input */}
-                    <div className="space-y-1">
-                      <label className="font-extrabold text-muted-foreground uppercase tracking-wider text-[8px]">Texto do Depoimento:</label>
-                      <textarea 
-                        className="w-full min-h-[70px] bg-card/60 border border-border/50 rounded-lg px-2.5 py-1.5 outline-none text-foreground focus:border-primary resize-y text-xs leading-normal"
-                        value={t.feedback || ''} 
-                        onChange={e => handleUpdateTestimonial(idx, { feedback: e.target.value })} 
-                        placeholder="Estava há 3 meses mandando currículo..."
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Remove Testimonial Action */}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTestimonial(idx)}
-                  className="w-full h-9 mt-2 inline-flex items-center justify-center gap-1.5 rounded-xl bg-destructive/10 hover:bg-destructive hover:text-white text-destructive font-black text-xs transition-all shadow-sm cursor-pointer"
-                >
-                  <Trash className="w-3.5 h-3.5" />
-                  Remover Prova Social
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Side: System Configuration & LLM Info (col-span-4) */}
         <div className="lg:col-span-4 space-y-8">
@@ -889,6 +754,141 @@ export default function CentralMasterPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* SECTION: Social Proof Manager */}
+      <div className="glass p-6 rounded-3xl border border-border/60 shadow-lg space-y-6 mt-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/50 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-amber-500/10 p-2 rounded-xl text-amber-500">
+              <MessageSquare className="w-5 h-5 fill-amber-500/20" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-foreground">Gerenciador de Provas Sociais</h2>
+              <p className="text-xs text-muted-foreground">Adicione, remova e edite fotos, nomes e depoimentos na página de upgrade</p>
+            </div>
+          </div>
+          <button 
+            type="button"
+            onClick={handleAddTestimonial}
+            className="inline-flex h-10 items-center gap-1.5 px-4 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/45 font-black text-xs transition-all cursor-pointer shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Adicionar Depoimento
+          </button>
+        </div>
+
+        {(!config.testimonials || config.testimonials.length === 0) ? (
+          <div className="border border-dashed border-border/80 rounded-2xl p-8 text-center space-y-3">
+            <MessageSquare className="w-8 h-8 text-muted-foreground/45 mx-auto" />
+            <p className="text-xs text-muted-foreground font-semibold">Nenhuma prova social customizada configurada no momento.</p>
+            <p className="text-[10px] text-muted-foreground/60 leading-normal">
+              O sistema está utilizando os depoimentos padrões estáticos como fallback. Clique em &ldquo;Adicionar Depoimento&rdquo; para começar a customizar!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {(config.testimonials || []).map((t: any, idx: number) => (
+              <div 
+                key={idx} 
+                className="flex flex-col justify-between p-5 bg-card/30 border border-border/60 hover:border-border rounded-2xl transition-all gap-4 relative overflow-hidden group"
+              >
+                <div className="space-y-4">
+                  {/* Card Header with Image Preview & Star Rating selector */}
+                  <div className="flex items-start gap-3">
+                    <img 
+                      src={t.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120&h=120'} 
+                      alt={t.name} 
+                      className="w-12 h-12 rounded-full object-cover border border-border shrink-0 bg-secondary"
+                      onError={(e: any) => {
+                        e.target.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120&h=120';
+                      }}
+                    />
+                    <div className="space-y-1.5 w-full">
+                      <div className="flex items-center gap-1.5">
+                        <label className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">Avaliação:</label>
+                        <select 
+                          value={t.rating || 5} 
+                          onChange={e => handleUpdateTestimonial(idx, { rating: parseInt(e.target.value) })}
+                          className="bg-secondary/60 text-[10px] font-black border border-border/40 rounded px-1.5 py-0.5 outline-none text-amber-500"
+                        >
+                          <option value={5}>⭐⭐⭐⭐⭐ 5</option>
+                          <option value={4}>⭐⭐⭐⭐ 4</option>
+                          <option value={3}>⭐⭐⭐ 3</option>
+                          <option value={2}>⭐⭐ 2</option>
+                          <option value={1}>⭐ 1</option>
+                        </select>
+                      </div>
+                      <input 
+                        className="w-full text-xs font-black bg-card/60 border border-border/50 rounded-lg px-2 py-1 outline-none text-foreground focus:border-primary"
+                        value={t.name || ''} 
+                        onChange={e => handleUpdateTestimonial(idx, { name: e.target.value })} 
+                        placeholder="Nome do Candidato"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Input Fields Grid */}
+                  <div className="space-y-3 text-[10px] leading-normal">
+                    {/* Role Input */}
+                    <div className="space-y-1">
+                      <label className="font-extrabold text-muted-foreground uppercase tracking-wider text-[8px]">Cargo / Subtítulo:</label>
+                      <input 
+                        className="w-full bg-card/60 border border-border/50 rounded-lg px-2.5 py-1.5 outline-none text-foreground focus:border-primary"
+                        value={t.role || ''} 
+                        onChange={e => handleUpdateTestimonial(idx, { role: e.target.value })} 
+                        placeholder="Ex: Desenvolvedor Backend Júnior"
+                      />
+                    </div>
+
+                    {/* Achievement Input */}
+                    <div className="space-y-1">
+                      <label className="font-extrabold text-muted-foreground uppercase tracking-wider text-[8px]">Conquista / Badge (ex: 🎉 Contratado):</label>
+                      <input 
+                        className="w-full bg-card/60 border border-border/50 rounded-lg px-2.5 py-1.5 outline-none text-foreground focus:border-primary"
+                        value={t.achievement || ''} 
+                        onChange={e => handleUpdateTestimonial(idx, { achievement: e.target.value })} 
+                        placeholder="🎉 Contratado em 12 dias"
+                      />
+                    </div>
+
+                    {/* Avatar URL Input */}
+                    <div className="space-y-1">
+                      <label className="font-extrabold text-muted-foreground uppercase tracking-wider text-[8px]">URL da Foto de Perfil (Avatar):</label>
+                      <input 
+                        className="w-full font-mono bg-card/60 border border-border/50 rounded-lg px-2.5 py-1.5 outline-none text-foreground focus:border-primary truncate text-[9px]"
+                        value={t.avatar || ''} 
+                        onChange={e => handleUpdateTestimonial(idx, { avatar: e.target.value })} 
+                        placeholder="https://..."
+                      />
+                    </div>
+
+                    {/* Feedback Area Input */}
+                    <div className="space-y-1">
+                      <label className="font-extrabold text-muted-foreground uppercase tracking-wider text-[8px]">Texto do Depoimento:</label>
+                      <textarea 
+                        className="w-full min-h-[70px] bg-card/60 border border-border/50 rounded-lg px-2.5 py-1.5 outline-none text-foreground focus:border-primary resize-y text-xs leading-normal"
+                        value={t.feedback || ''} 
+                        onChange={e => handleUpdateTestimonial(idx, { feedback: e.target.value })} 
+                        placeholder="Estava há 3 meses mandando currículo..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Remove Testimonial Action */}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTestimonial(idx)}
+                  className="w-full h-9 mt-2 inline-flex items-center justify-center gap-1.5 rounded-xl bg-destructive/10 hover:bg-destructive hover:text-white text-destructive font-black text-xs transition-all shadow-sm cursor-pointer"
+                >
+                  <Trash className="w-3.5 h-3.5" />
+                  Remover Prova Social
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </PageWrapper>
   );
