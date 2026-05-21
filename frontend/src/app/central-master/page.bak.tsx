@@ -271,230 +271,7 @@ export default function CentralMasterPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Side: Operations Dashboard (col-span-8) */}
-        <div className="lg:col-span-8 space-y-8">
-          {/* Card 1: Gerenciador de Acessos */}
-          <div className="glass p-6 rounded-3xl border border-border/60 shadow-lg space-y-6">
-            <div className="flex items-center justify-between border-b border-border/50 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-accent/10 p-2 rounded-xl text-accent">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-black text-foreground">Gerenciador de Acessos</h2>
-                  <p className="text-xs text-muted-foreground">Monitore e libere assinaturas PRO</p>
-                </div>
-              </div>
-              <button 
-                onClick={fetchUsers}
-                className="text-xs font-bold text-primary hover:underline cursor-pointer"
-                disabled={loadingUsers}
-              >
-                Recarregar
-              </button>
-            </div>
-
-            {/* Interactive Live Search Input */}
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input 
-                className="flex h-10 w-full rounded-xl border border-border bg-card/40 pl-10 pr-4 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent outline-none transition-all"
-                placeholder="Buscar por nome ou e-mail..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            {loadingUsers ? (
-              <div className="py-12 flex flex-col items-center gap-2">
-                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                <p className="text-xs text-muted-foreground font-semibold">Buscando usuários...</p>
-              </div>
-            ) : users.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground text-sm">
-                Nenhum usuário registrado encontrado.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[550px] overflow-y-auto pr-1">
-                {users
-                  .filter(u => 
-                    u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                    u.email.toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-                  .map(u => (
-                    <div 
-                      key={u.id} 
-                      className="flex flex-col justify-between p-4 bg-card/40 border border-border/60 hover:border-border rounded-2xl transition-all gap-3"
-                    >
-                      <div className="space-y-1.5 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-extrabold text-sm text-foreground truncate max-w-[150px]">{u.name}</span>
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
-                            u.planStatus === 'pro' 
-                              ? 'bg-green-500/10 text-green-600 border border-green-500/20' 
-                              : 'bg-secondary text-muted-foreground'
-                          }`}>
-                            {u.planStatus === 'pro' ? '★ PRO' : 'FREE'}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground truncate">{u.email}</p>
-                        
-                        {u.planStatus === 'pro' && (
-                          <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/5 border border-amber-500/10 px-2 py-1 rounded-lg inline-block">
-                            {u.expiresAt 
-                              ? `Expira em: ${new Date(u.expiresAt).toLocaleDateString('pt-BR')}` 
-                              : 'Acesso Vitalício'}
-                          </div>
-                        )}
-                        
-                        <p className="text-[9px] text-muted-foreground/60">
-                          Cadastro: {new Date(u.createdAt).toLocaleDateString('pt-BR')}
-                        </p>
-
-                        {/* Quota Telemetry Details */}
-                        <div className="bg-secondary/20 p-2.5 rounded-xl border border-border/40 text-[10px] space-y-1 my-1">
-                          <div className="flex justify-between items-center text-muted-foreground">
-                            <span>Buscas Feitas:</span>
-                            <span className="font-bold text-foreground">{u.searchCount || 0} / {config.free_limit}</span>
-                          </div>
-                          <div className="flex justify-between items-center text-muted-foreground">
-                            <span>Copiloto IA:</span>
-                            <span className="font-bold text-foreground">
-                              {u.copilotCount || 0} / {(config.free_copilot_limit || 2) + (u.extraCopilotCredits || 0)}
-                              {u.extraCopilotCredits > 0 && <span className="text-primary font-black ml-1">({u.extraCopilotCredits} extra)</span>}
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center text-muted-foreground">
-                            <span>Express Utilizado?</span>
-                            <span className={`font-bold ${u.usedExpress ? 'text-amber-500' : 'text-green-500'}`}>
-                              {u.usedExpress ? 'Sim (Bloqueado)' : 'Não (Livre)'}
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center text-muted-foreground">
-                            <span>Vagas Ocultas Feed?</span>
-                            <span className={`font-bold ${u.usedPostsVaga || u.usedPostsHiring || u.usedPostsCurriculo ? 'text-amber-500' : 'text-green-500'}`}>
-                              {u.usedPostsVaga || u.usedPostsHiring || u.usedPostsCurriculo ? 'Sim (Bloqueado)' : 'Não (Livre)'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2 pt-2 border-t border-border/20 mt-auto">
-                        <button
-                          onClick={() => handleToggleUserPlan(u.id, u.planStatus)}
-                          disabled={updatingUser === u.id}
-                          className={`h-9 w-full inline-flex items-center justify-center rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                            u.planStatus === 'pro'
-                              ? 'bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-white'
-                              : 'bg-green-500/10 text-green-600 border border-green-500/20 hover:bg-green-500 hover:text-white'
-                          } disabled:opacity-50`}
-                        >
-                          {updatingUser === u.id 
-                            ? 'Processando...' 
-                            : u.planStatus === 'pro' 
-                              ? 'Rebaixar para Free' 
-                              : 'Conceder Acesso PRO'
-                          }
-                        </button>
-
-                        {/* Custom Permission Unlock Buttons */}
-                        <div className="grid grid-cols-3 gap-1 pt-1">
-                          <button
-                            onClick={() => handleUnlockFeature(u.id, 'copilot')}
-                            className="h-8 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[8px] border border-primary/20 transition-all cursor-pointer flex items-center justify-center gap-0.5"
-                            title="Liberar +1 uso do Copiloto de IA"
-                          >
-                            <Sparkles className="w-2 h-2 shrink-0" />
-                            +1 Copiloto
-                          </button>
-                          <button
-                            onClick={() => handleUnlockFeature(u.id, 'express')}
-                            className="h-8 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 font-bold text-[8px] border border-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-0.5"
-                            title="Resetar bloqueio e liberar mais 1 clique no Express"
-                          >
-                            <Sliders className="w-2 h-2 shrink-0" />
-                            Lib Express
-                          </button>
-                          <button
-                            onClick={() => handleUnlockFeature(u.id, 'feed')}
-                            className="h-8 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 font-bold text-[8px] border border-green-500/20 transition-all cursor-pointer flex items-center justify-center gap-0.5"
-                            title="Resetar bloqueios e liberar acessos ao Feed de Vagas Ocultas"
-                          >
-                            <Activity className="w-2 h-2 shrink-0" />
-                            Lib Feed
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-
-          {/* Card 2: Monitor em Tempo Real */}
-          <div className="glass p-6 rounded-3xl border border-border/60 shadow-lg space-y-6">
-            <div className="flex items-center justify-between border-b border-border/50 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary/10 p-2 rounded-xl text-primary animate-pulse">
-                  <Activity className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-black text-foreground">Monitor em Tempo Real</h2>
-                  <p className="text-xs text-muted-foreground">Varreduras recentes dos candidatos</p>
-                </div>
-              </div>
-              <button 
-                onClick={fetchHistory}
-                className="text-xs font-bold text-primary hover:underline cursor-pointer"
-                disabled={loadingHistory}
-              >
-                Atualizar
-              </button>
-            </div>
-
-            {loadingHistory ? (
-              <div className="py-12 flex flex-col items-center gap-2">
-                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                <p className="text-xs text-muted-foreground font-semibold">Carregando histórico...</p>
-              </div>
-            ) : history.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground text-sm leading-relaxed">
-                Nenhuma varredura efetuada por candidatos no momento.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[550px] overflow-y-auto pr-1">
-                {history.map(h => (
-                  <div 
-                    key={h.id} 
-                    className="p-3.5 bg-card/20 border border-border/50 hover:border-border rounded-2xl transition-all space-y-2 relative overflow-hidden group flex flex-col justify-between"
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-[10px] gap-2 min-w-0">
-                        <span className="font-extrabold text-foreground truncate max-w-[120px]">{h.userName}</span>
-                        <span className="text-muted-foreground/60 text-[9px] shrink-0 font-semibold">
-                          {new Date(h.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      
-                      <div className="text-xs font-bold text-primary bg-primary/5 border border-primary/10 px-3 py-2 rounded-xl break-words leading-normal select-all">
-                        {h.original_query}
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-[9px] text-muted-foreground/80 font-medium pt-2 border-t border-border/10 mt-1">
-                      <span className="truncate max-w-[150px]">{h.userEmail}</span>
-                      <span className="text-[8px] bg-secondary px-1.5 py-0.5 rounded uppercase tracking-wider font-black text-muted-foreground/75">
-                        Varredura ok
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right Side: System Configuration & LLM Info (col-span-4) */}
+        {/* Left Side: System Configuration & LLM Info (col-span-4) */}
         <div className="lg:col-span-4 space-y-8">
           {/* Card 1: Configuration Form */}
           <div className="glass p-6 rounded-3xl border border-border/60 shadow-lg space-y-6">
@@ -503,7 +280,7 @@ export default function CentralMasterPage() {
                 <Sliders className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-black text-foreground">Configurações Gerais</h2>
+                <h2 className="text-lg font-black text-foreground">Configurações</h2>
                 <p className="text-xs text-muted-foreground">Preços, PIX e redes comerciais</p>
               </div>
             </div>
@@ -640,7 +417,7 @@ export default function CentralMasterPage() {
                 disabled={savingConfig} 
                 className="w-full mt-6 h-12 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent hover:brightness-110 disabled:pointer-events-none disabled:opacity-50 text-white text-sm font-bold transition-all shadow-md shadow-primary/25 cursor-pointer"
               >
-                {savingConfig ? 'Processando...' : 'Salvar Configurações Gerais'}
+                {savingConfig ? 'Processando...' : 'Salvar Alterações Globais'}
               </button>
             </div>
           </div>
@@ -759,6 +536,224 @@ export default function CentralMasterPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+        </div>
+
+        {/* Middle: User List & Plan Management */}
+        <div className="lg:col-span-4 glass p-6 rounded-3xl border border-border/60 shadow-lg space-y-6">
+          <div className="flex items-center justify-between border-b border-border/50 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-accent/10 p-2 rounded-xl text-accent">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg font-black text-foreground">Gerenciador de Acessos</h2>
+                <p className="text-xs text-muted-foreground">Monitore e libere assinaturas PRO</p>
+              </div>
+            </div>
+            <button 
+              onClick={fetchUsers}
+              className="text-xs font-bold text-primary hover:underline cursor-pointer"
+              disabled={loadingUsers}
+            >
+              Recarregar
+            </button>
+          </div>
+
+          {/* Interactive Live Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input 
+              className="flex h-10 w-full rounded-xl border border-border bg-card/40 pl-10 pr-4 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent outline-none transition-all"
+              placeholder="Buscar por nome ou e-mail..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          {loadingUsers ? (
+            <div className="py-12 flex flex-col items-center gap-2">
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs text-muted-foreground font-semibold">Buscando usuários...</p>
+            </div>
+          ) : users.length === 0 ? (
+            <div className="py-12 text-center text-muted-foreground text-sm">
+              Nenhum usuário registrado encontrado.
+            </div>
+          ) : (
+            <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
+              {users
+                .filter(u => 
+                  u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                  u.email.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map(u => (
+                  <div 
+                    key={u.id} 
+                    className="flex flex-col p-4 bg-card/40 border border-border/60 hover:border-border rounded-2xl transition-all gap-3"
+                  >
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-extrabold text-sm text-foreground truncate max-w-[150px]">{u.name}</span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                          u.planStatus === 'pro' 
+                            ? 'bg-green-500/10 text-green-600 border border-green-500/20' 
+                            : 'bg-secondary text-muted-foreground'
+                        }`}>
+                          {u.planStatus === 'pro' ? '★ PRO' : 'FREE'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+                      
+                      {u.planStatus === 'pro' && (
+                        <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/5 border border-amber-500/10 px-2 py-1 rounded-lg inline-block">
+                          {u.expiresAt 
+                            ? `Expira em: ${new Date(u.expiresAt).toLocaleDateString('pt-BR')}` 
+                            : 'Acesso Vitalício'}
+                        </div>
+                      )}
+                      
+                      <p className="text-[9px] text-muted-foreground/60">
+                        Cadastro: {new Date(u.createdAt).toLocaleDateString('pt-BR')}
+                      </p>
+
+                      {/* Quota Telemetry Details */}
+                      <div className="bg-secondary/20 p-2.5 rounded-xl border border-border/40 text-[10px] space-y-1 my-1">
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span>Buscas Feitas:</span>
+                          <span className="font-bold text-foreground">{u.searchCount || 0} / {config.free_limit}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span>Copiloto IA:</span>
+                          <span className="font-bold text-foreground">
+                            {u.copilotCount || 0} / {(config.free_copilot_limit || 2) + (u.extraCopilotCredits || 0)}
+                            {u.extraCopilotCredits > 0 && <span className="text-primary font-black ml-1">({u.extraCopilotCredits} extra)</span>}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span>Express Utilizado?</span>
+                          <span className={`font-bold ${u.usedExpress ? 'text-amber-500' : 'text-green-500'}`}>
+                            {u.usedExpress ? 'Sim (Bloqueado)' : 'Não (Livre)'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span>Vagas Ocultas Feed?</span>
+                          <span className={`font-bold ${u.usedPostsVaga || u.usedPostsHiring || u.usedPostsCurriculo ? 'text-amber-500' : 'text-green-500'}`}>
+                            {u.usedPostsVaga || u.usedPostsHiring || u.usedPostsCurriculo ? 'Sim (Bloqueado)' : 'Não (Livre)'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => handleToggleUserPlan(u.id, u.planStatus)}
+                        disabled={updatingUser === u.id}
+                        className={`h-9 w-full inline-flex items-center justify-center rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
+                          u.planStatus === 'pro'
+                            ? 'bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-white'
+                            : 'bg-green-500/10 text-green-600 border border-green-500/20 hover:bg-green-500 hover:text-white'
+                        } disabled:opacity-50`}
+                      >
+                        {updatingUser === u.id 
+                          ? 'Processando...' 
+                          : u.planStatus === 'pro' 
+                            ? 'Rebaixar para Free' 
+                            : 'Conceder Acesso PRO'
+                        }
+                      </button>
+
+                      {/* Custom Permission Unlock Buttons */}
+                      <div className="grid grid-cols-3 gap-1.5 pt-1">
+                        <button
+                          onClick={() => handleUnlockFeature(u.id, 'copilot')}
+                          className="h-8 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[9px] border border-primary/20 transition-all cursor-pointer flex items-center justify-center gap-1"
+                          title="Liberar +1 uso do Copiloto de IA"
+                        >
+                          <Sparkles className="w-2.5 h-2.5" />
+                          +1 Copiloto
+                        </button>
+                        <button
+                          onClick={() => handleUnlockFeature(u.id, 'express')}
+                          className="h-8 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 font-bold text-[9px] border border-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-1"
+                          title="Resetar bloqueio e liberar mais 1 clique no Express"
+                        >
+                          <Sliders className="w-2.5 h-2.5" />
+                          Lib Express
+                        </button>
+                        <button
+                          onClick={() => handleUnlockFeature(u.id, 'feed')}
+                          className="h-8 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 font-bold text-[9px] border border-green-500/20 transition-all cursor-pointer flex items-center justify-center gap-1"
+                          title="Resetar bloqueios e liberar acessos ao Feed de Vagas Ocultas"
+                        >
+                          <Activity className="w-2.5 h-2.5" />
+                          Lib Feed
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right Side: Real-Time Search Feed Monitor */}
+        <div className="lg:col-span-4 glass p-6 rounded-3xl border border-border/60 shadow-lg space-y-6">
+          <div className="flex items-center justify-between border-b border-border/50 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary animate-pulse">
+                <Activity className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg font-black text-foreground">Monitor em Tempo Real</h2>
+                <p className="text-xs text-muted-foreground">Varreduras recentes dos candidatos</p>
+              </div>
+            </div>
+            <button 
+              onClick={fetchHistory}
+              className="text-xs font-bold text-primary hover:underline cursor-pointer"
+              disabled={loadingHistory}
+            >
+              Atualizar
+            </button>
+          </div>
+
+          {loadingHistory ? (
+            <div className="py-12 flex flex-col items-center gap-2">
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs text-muted-foreground font-semibold">Carregando histórico...</p>
+            </div>
+          ) : history.length === 0 ? (
+            <div className="py-12 text-center text-muted-foreground text-sm leading-relaxed">
+              Nenhuma varredura efetuada por candidatos no momento.
+            </div>
+          ) : (
+            <div className="space-y-3.5 max-h-[520px] overflow-y-auto pr-1">
+              {history.map(h => (
+                <div 
+                  key={h.id} 
+                  className="p-3.5 bg-card/20 border border-border/50 hover:border-border rounded-2xl transition-all space-y-2 relative overflow-hidden group"
+                >
+                  <div className="flex items-center justify-between text-[10px] gap-2 min-w-0">
+                    <span className="font-extrabold text-foreground truncate max-w-[120px]">{h.userName}</span>
+                    <span className="text-muted-foreground/60 text-[9px] shrink-0 font-semibold">
+                      {new Date(h.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  
+                  <div className="text-xs font-bold text-primary bg-primary/5 border border-primary/10 px-3 py-2 rounded-xl break-words leading-normal select-all">
+                    {h.original_query}
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-[9px] text-muted-foreground/80 font-medium">
+                    <span className="truncate max-w-[150px]">{h.userEmail}</span>
+                    <span className="text-[8px] bg-secondary px-1.5 py-0.5 rounded uppercase tracking-wider font-black text-muted-foreground/75">
+                      Varredura ok
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -1004,14 +999,11 @@ export default function CentralMasterPage() {
         {/* SECTION FOOTER: Big Explicit Save Button directly where they edit */}
         {config.testimonials && config.testimonials.length > 0 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-border/50 mt-4 bg-secondary/5 p-4 rounded-2xl border border-border/40">
-            <div className="text-left space-y-1">
+            <div className="text-left space-y-0.5">
               <span className="text-xs font-black text-foreground block">Deseja aplicar as novas alterações no site?</span>
               <p className="text-[10px] text-muted-foreground leading-normal">
-                Todas as alterações feitas nos depoimentos serão salvas permanentemente no banco de dados.
+                Todas as alterações feitas nos depoimentos e nas configurações globais acima serão salvas permanentemente no banco Supabase.
               </p>
-              <span className="text-[9px] text-amber-500 font-bold block">
-                💡 Lembre-se de recarregar a tela de Upgrade para visualizar os depoimentos atualizados!
-              </span>
             </div>
             
             <button 
@@ -1023,12 +1015,12 @@ export default function CentralMasterPage() {
               {savingConfig ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Salvando Provas Sociais...</span>
+                  <span>Salvando Alterações...</span>
                 </>
               ) : (
                 <>
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Salvar Provas Sociais</span>
+                  <span>Salvar Provas Sociais & Alterações Globais</span>
                 </>
               )}
             </button>
