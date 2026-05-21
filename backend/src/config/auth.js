@@ -22,5 +22,8 @@ export const auth = betterAuth({
   trustedOrigins: ['http://localhost:3000', 'https://vagas.rankia.cloud', process.env.ALLOWED_ORIGIN].filter(Boolean),
   advanced: {
     useSecureCookies: process.env.NODE_ENV === 'production',
+    crossSubDomainCookies: {
+      enabled: true
+    }
   }
 });
