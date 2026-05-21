@@ -61,7 +61,7 @@ router.get('/config', async (req, res) => {
 
 // Update config (Admin only)
 router.put('/config', requireAdmin, async (req, res) => {
-  const { pix_key, qr_code_url, pro_price, pro_price_mensal, pro_price_trimestral, pro_price_semestral, free_limit, free_copilot_limit, whatsapp_number } = req.body;
+  const { pix_key, qr_code_url, pro_price, pro_price_mensal, pro_price_trimestral, pro_price_semestral, free_limit, free_copilot_limit, whatsapp_number, testimonials } = req.body;
   const { data, error } = await supabase
     .from('admin_config')
     .update({ 
@@ -74,6 +74,7 @@ router.put('/config', requireAdmin, async (req, res) => {
       free_limit, 
       free_copilot_limit,
       whatsapp_number, 
+      testimonials,
       updated_at: new Date() 
     })
     .eq('id', 1)
