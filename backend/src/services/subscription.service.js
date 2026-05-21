@@ -14,13 +14,15 @@ export class SubscriptionService {
     let currentCount = sub ? sub.search_count : 0;
     const now = new Date();
 
+    let wasCreated = false;
     if (!sub) {
       await supabase.from('subscriptions').insert({ 
         user_id: userId, 
         status: 'free', 
-        search_count: 0,
+        search_count: 1, // Inicia direto com 1 uso (evita escrita dupla)
         reset_date: now.toISOString()
       });
+      wasCreated = true;
     }
 
     // 1. Verifica expiração do plano PRO
@@ -52,11 +54,13 @@ export class SubscriptionService {
       throw new Error(`LIMITE_ATINGIDO:Você atingiu o limite de ${freeLimit} buscas do plano Free. Faça o upgrade para continuar.`);
     }
 
-    // Incrementa
-    await supabase
-      .from('subscriptions')
-      .update({ search_count: currentCount + 1 })
-      .eq('user_id', userId);
+    // Incrementa apenas se já existia (evitando escrita dupla no primeiro uso)
+    if (!wasCreated) {
+      await supabase
+        .from('subscriptions')
+        .update({ search_count: currentCount + 1 })
+        .eq('user_id', userId);
+    }
 
     return true;
   }

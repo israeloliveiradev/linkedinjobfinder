@@ -37,7 +37,6 @@ router.get('/copilot-limit', requireAuth, async (req, res) => {
     const { data: config } = await supabase
       .from('admin_config')
       .select('free_copilot_limit')
-      .eq('id', 1)
       .single();
       
     const freeCopilotLimit = config && config.free_copilot_limit !== undefined ? config.free_copilot_limit : 2;
@@ -76,7 +75,6 @@ router.post('/copilot', requireAuth, async (req, res) => {
     const { data: config } = await supabase
       .from('admin_config')
       .select('free_copilot_limit')
-      .eq('id', 1)
       .single();
       
     const freeCopilotLimit = config && config.free_copilot_limit !== undefined ? config.free_copilot_limit : 2;
@@ -151,16 +149,10 @@ ${keywords || 'Desenvolvedor'}`;
       const currentCount = sub?.copilot_count || 0;
       await supabase
         .from('subscriptions')
-        .upsert({
-          user_id: req.user.id,
-          copilot_count: currentCount + 1,
-          status: sub?.status || 'free',
-          search_count: sub?.search_count || 0,
-          used_express: sub?.used_express || false,
-          used_posts_vaga: sub?.used_posts_vaga || false,
-          used_posts_hiring: sub?.used_posts_hiring || false,
-          used_posts_curriculo: sub?.used_posts_curriculo || false
-        });
+        .update({
+          copilot_count: currentCount + 1
+        })
+        .eq('user_id', req.user.id);
     }
 
     res.json(parsed);

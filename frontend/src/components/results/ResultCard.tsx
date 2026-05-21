@@ -101,7 +101,7 @@ export function ResultCard({ result }: ResultCardProps) {
     if (!resumeText.trim()) return;
     const title = prompt('Dê um título para salvar este currículo na sua biblioteca PRO:', `Currículo ${new Date().toLocaleDateString()}`);
     if (!title) return;
-    
+
     setIsSavingResumeCloud(true);
     try {
       const res = await api.post('/api/resumes', {
@@ -174,7 +174,7 @@ export function ResultCard({ result }: ResultCardProps) {
         keywords: result.parsedParams.keywords
       });
       setCopilotResult(res.data);
-      
+
       // Refresh user limits to update remaining usos counter in real-time!
       api.get('/api/search/copilot-limit')
         .then(limitRes => setCopilotLimitInfo(limitRes.data))
@@ -218,8 +218,8 @@ export function ResultCard({ result }: ResultCardProps) {
                 disabled={isSavingPreset}
                 className={cn(
                   "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer",
-                  presetSaved 
-                    ? "bg-green-500/10 text-green-500 border-green-500/20 shadow-md shadow-green-500/10" 
+                  presetSaved
+                    ? "bg-green-500/10 text-green-500 border-green-500/20 shadow-md shadow-green-500/10"
                     : "bg-secondary/40 hover:bg-secondary/80 text-foreground border-border/80"
                 )}
               >
@@ -264,7 +264,7 @@ export function ResultCard({ result }: ResultCardProps) {
                   <p className="text-xs text-muted-foreground max-w-sm mt-1 mb-4 leading-relaxed">
                     Copie a descrição de uma vaga do LinkedIn, cole seu currículo e obtenha a compatibilidade (Match Score), checklist de habilidades em falta e pitches de apresentação personalizados!
                   </p>
-                  <button 
+                  <button
                     onClick={() => router.push('/upgrade')}
                     className="h-10 px-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent hover:brightness-110 text-white text-xs font-bold transition-all shadow-md shadow-primary/25 cursor-pointer"
                   >
@@ -314,7 +314,7 @@ export function ResultCard({ result }: ResultCardProps) {
                         </div>
                       )}
                     </div>
-                    
+
                     <textarea
                       rows={5}
                       className="w-full rounded-2xl border border-border bg-card/40 px-3.5 py-2.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent outline-none transition-all placeholder:text-muted-foreground/50 resize-none font-sans leading-relaxed"
@@ -322,7 +322,7 @@ export function ResultCard({ result }: ResultCardProps) {
                       value={resumeText}
                       onChange={e => handleSaveResumeLocal(e.target.value)}
                     />
-                    
+
                     {isPro && resumeText.trim() && (
                       <div className="flex justify-between items-center pt-0.5">
                         <span className="text-[9px] text-muted-foreground/50">
@@ -340,7 +340,7 @@ export function ResultCard({ result }: ResultCardProps) {
                       </div>
                     )}
                   </div>
- 
+
                   {/* Job Description paste */}
                   <div className="space-y-2">
                     <div className="h-7 flex items-center justify-between">
@@ -366,8 +366,8 @@ export function ResultCard({ result }: ResultCardProps) {
                       <span>{copilotError}</span>
                     </div>
                     {copilotError.includes('Limite gratuito') && (
-                      <a 
-                        href="/upgrade" 
+                      <a
+                        href="/upgrade"
                         className="mt-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-destructive text-white rounded-lg font-bold text-[10px] uppercase tracking-wider hover:brightness-110 transition-all self-start cursor-pointer"
                       >
                         🚀 Fazer Upgrade para PRO Ilimitado
@@ -400,7 +400,7 @@ export function ResultCard({ result }: ResultCardProps) {
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4" />
-                      <span>Analisar Vaga & Gerar Abordagem Personalizada com I.A.</span>
+                      <span>Analisar Vaga com A.I.</span>
                     </>
                   )}
                 </button>
@@ -416,7 +416,7 @@ export function ResultCard({ result }: ResultCardProps) {
                           <span className={cn(
                             "text-3xl font-black font-mono tracking-tight",
                             copilotResult.matchScore >= 80 ? "text-green-500" :
-                            copilotResult.matchScore >= 50 ? "text-amber-500" : "text-destructive"
+                              copilotResult.matchScore >= 50 ? "text-amber-500" : "text-destructive"
                           )}>
                             {copilotResult.matchScore}%
                           </span>
@@ -425,11 +425,11 @@ export function ResultCard({ result }: ResultCardProps) {
                       <div className={cn(
                         "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider",
                         copilotResult.matchScore >= 80 ? "bg-green-500/10 text-green-500 border border-green-500/20" :
-                        copilotResult.matchScore >= 50 ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" :
-                        "bg-destructive/10 text-destructive border border-destructive/20"
+                          copilotResult.matchScore >= 50 ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" :
+                            "bg-destructive/10 text-destructive border border-destructive/20"
                       )}>
                         {copilotResult.matchScore >= 80 ? "Altamente Compatível" :
-                         copilotResult.matchScore >= 50 ? "Compatibilidade Média" : "Baixa Compatibilidade"}
+                          copilotResult.matchScore >= 50 ? "Compatibilidade Média" : "Baixa Compatibilidade"}
                       </div>
                     </div>
 
@@ -455,8 +455,8 @@ export function ResultCard({ result }: ResultCardProps) {
                         {copilotResult.missingKeywords && copilotResult.missingKeywords.length > 0 ? (
                           <div className="flex flex-wrap gap-1.5">
                             {copilotResult.missingKeywords.map((kw: string) => (
-                              <span 
-                                key={kw} 
+                              <span
+                                key={kw}
                                 className="px-2.5 py-1 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-1"
                               >
                                 ✖ {kw}
@@ -518,7 +518,7 @@ export function ResultCard({ result }: ResultCardProps) {
                     <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                       🔎 Mapeamento Semântico de Cargos
                     </h3>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setShowCargoInfo(!showCargoInfo)}
                       className="p-1 hover:bg-secondary rounded-lg text-muted-foreground hover:text-foreground transition-all cursor-pointer"
@@ -530,7 +530,7 @@ export function ResultCard({ result }: ResultCardProps) {
 
                   {showCargoInfo && (
                     <div className="p-4 bg-secondary/60 border border-border/80 rounded-2xl text-xs text-muted-foreground leading-relaxed animate-in fade-in slide-in-from-top-1 duration-200">
-                      📌 <strong>Por que tantas variações?</strong> O motor de vagas.rankia.cloud analisa o cargo digitado e expande automaticamente a pesquisa com sinônimos e equivalentes de mercado (inclusive em inglês). 
+                      📌 <strong>Por que tantas variações?</strong> O motor de vagas.rankia.cloud analisa o cargo digitado e expande automaticamente a pesquisa com sinônimos e equivalentes de mercado (inclusive em inglês).
                       <br />
                       <span className="text-foreground font-semibold">Todas elas são usadas simultaneamente</span> na mesma consulta para mapear 100% das vagas disponíveis, garantindo que você não perca nenhuma oportunidade só porque o recrutador cadastrou a vaga sob um nome alternativo.
                     </div>
@@ -547,7 +547,7 @@ export function ResultCard({ result }: ResultCardProps) {
                         </span>
                       ))
                     ) : (
-                      <button 
+                      <button
                         onClick={() => router.push('/upgrade')}
                         className="px-3.5 py-1.5 bg-secondary/10 hover:bg-primary/5 hover:border-primary/30 text-muted-foreground/60 hover:text-primary rounded-xl text-xs border border-dashed border-border/80 font-bold transition-all cursor-pointer"
                       >
@@ -626,21 +626,21 @@ export function ResultCard({ result }: ResultCardProps) {
                 </button>
               )}
             </div>
- 
+
             {/* Explanation box for Busca Express with (i) */}
             <div className="p-4.5 bg-primary/5 border border-primary/15 rounded-2xl flex gap-3.5 text-xs text-muted-foreground leading-relaxed animate-in fade-in duration-300">
               <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
               <div>
                 <strong className="text-foreground uppercase tracking-wide text-[10px] block mb-1">O que é a Busca Express?</strong>
                 <p className="text-[12px]">
-                  A Busca Express ativa instantaneamente o filtro de <strong>Candidatura Simplificada (Easy Apply)</strong> no LinkedIn. 
-                  Isso permite que você envie sua candidatura com apenas <strong>1 clique</strong> em segundos usando seu currículo anexado. 
+                  A Busca Express ativa instantaneamente o filtro de <strong>Candidatura Simplificada (Easy Apply)</strong> no LinkedIn.
+                  Isso permite que você envie sua candidatura com apenas <strong>1 clique</strong> em segundos usando seu currículo anexado.
                   Você pula totalmente os formulários externos cansativos (como Gupy, Greenhouse ou Lever) que demoram até 30 minutos por vaga!
                 </p>
               </div>
             </div>
           </div>
- 
+
           {/* Feed Posts (Vagas Ocultas) */}
           <div className="w-full border-t border-border/80 pt-6 space-y-4">
             <div className="space-y-1">
@@ -651,7 +651,7 @@ export function ResultCard({ result }: ResultCardProps) {
                 Muitos gestores de diversas empresas e setores postam vagas diretamente em suas redes pessoais para economizar nos custos formais do LinkedIn Recruiter. Use os botões abaixo para garimpar essas postagens valiosas e falar direto com quem contrata!
               </p>
             </div>
- 
+
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {result.urls.postsVaga && (isPro || !clickedFeatures.includes('postsVaga')) ? (
                 <a
@@ -673,7 +673,7 @@ export function ResultCard({ result }: ResultCardProps) {
                   <span>Buscar por "Vaga" (PRO)</span>
                 </button>
               )}
- 
+
               {result.urls.postsHiring && (isPro || !clickedFeatures.includes('postsHiring')) ? (
                 <a
                   href={result.urls.postsHiring}
@@ -694,7 +694,7 @@ export function ResultCard({ result }: ResultCardProps) {
                   <span>Buscar "Contratando" (PRO)</span>
                 </button>
               )}
- 
+
               {result.urls.postsCurriculo && (isPro || !clickedFeatures.includes('postsCurriculo')) ? (
                 <a
                   href={result.urls.postsCurriculo}
@@ -719,7 +719,7 @@ export function ResultCard({ result }: ResultCardProps) {
           </div>
         </div>
       </div>
-      
+
       <div className="mt-6 flex items-center gap-2 justify-center text-muted-foreground text-sm">
         <Info className="h-4 w-4" />
         <p>Esta busca foi salva automaticamente no seu histórico.</p>
