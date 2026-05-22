@@ -23,7 +23,7 @@ export const auth = betterAuth({
   advanced: {
     useSecureCookies: process.env.NODE_ENV === 'production',
     crossSubDomainCookies: {
-      enabled: true
+      enabled: process.env.NODE_ENV === 'production'
     }
   }
 });

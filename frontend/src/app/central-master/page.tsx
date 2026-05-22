@@ -39,7 +39,7 @@ export default function CentralMasterPage() {
         console.error(err);
         setLoadingConfig(false);
       });
-  }, []);
+  }, [session?.user?.id]);
 
   const fetchUsers = async () => {
     setLoadingUsers(true);
