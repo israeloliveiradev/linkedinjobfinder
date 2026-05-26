@@ -212,7 +212,7 @@ export function ResultCard({ result }: ResultCardProps) {
               <h2 className="text-2xl font-black text-foreground">Resultado do Scanner</h2>
               <p className="text-muted-foreground text-xs mt-1">Gerada em {new Date(result.createdAt).toLocaleString()}</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
               <button
                 onClick={handleSavePreset}
                 disabled={isSavingPreset}
