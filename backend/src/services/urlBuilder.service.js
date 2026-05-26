@@ -22,9 +22,11 @@ export class UrlBuilderService {
       distance,
       easyApply,
       lowApplicants,
-      company
+      company,
+      exclusions = []
     } = params;
 
+    // --- MANTÉM O MOTOR DO LINKEDIN EXATAMENTE IGUAL ---
     const baseUrl = 'https://www.linkedin.com/jobs/search/';
     const searchParams = new URLSearchParams();
 
@@ -75,7 +77,6 @@ export class UrlBuilderService {
       return `${baseUrl}?${p.toString()}`;
     };
 
-    // Make a flat, parenthesis-free keyword search query that is 100% bulletproof for LinkedIn content search URL.
     const makeFlatQuery = (prefix, rawStr) => {
       if (!rawStr) return `"${prefix}"`;
       const stopWords = new Set(['de', 'para', 'em', 'a', 'o', 'com', 'e', 'do', 'da']);
@@ -101,6 +102,164 @@ export class UrlBuilderService {
       p.append('sortBy', '"date_posted"');
       return `${postSearchBaseUrl}?${p.toString()}`;
     };
+    // ----------------------------------------------------
+
+    // --- NOVA INTELIGÊNCIA: INDEED & GUPY (COM SMART REMOTE OVERRIDE) ---
+    const isRemote = workModesArr.includes('2') || 
+                     (workMode && (
+                       (Array.isArray(workMode) && (workMode.includes('remoto') || workMode.includes('remote'))) ||
+                       (typeof workMode === 'string' && (workMode === 'remoto' || workMode === 'remote'))
+                     ));
+
+    // 1. CONSTRUTOR INDEED
+    const INDEED_LOCATION_MAP = {
+      'sao paulo': 'São Paulo, SP',
+      'sao paulo cidade': 'São Paulo, SP',
+      'campinas': 'Campinas, SP',
+      'santos': 'Santos, SP',
+      'osasco': 'Osasco, SP',
+      'rio de janeiro': 'Rio de Janeiro, RJ',
+      'brasilia': 'Brasília, DF',
+      'belo horizonte': 'Belo Horizonte, MG',
+      'salvador': 'Salvador, BA',
+      'fortaleza': 'Fortaleza, CE',
+      'manaus': 'Manaus, AM',
+      'curitiba': 'Curitiba, PR',
+      'recife': 'Recife, PE',
+      'porto alegre': 'Porto Alegre, RS',
+      'goiania': 'Goiânia, GO',
+      'florianopolis': 'Florianópolis, SC',
+      'vitoria': 'Vitória, ES',
+      'brasil': 'Brasil'
+    };
+
+    let indeedLoc = 'Brasil';
+    if (isRemote) {
+      indeedLoc = 'remoto';
+    } else if (location) {
+      const normLoc = location.toLowerCase().trim();
+      indeedLoc = INDEED_LOCATION_MAP[normLoc] || location.replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    const indeedParams = new URLSearchParams();
+    
+    // 1. Construção de Query Inteligente com Negações (Exclusões + Senioridade, omitindo Anti-Spam de Consultorias)
+    let indeedQuery = rawKeywords || keywords;
+    if (exclusions && exclusions.length > 0) {
+      const spamCompanies = ['BairesDev', 'Crossover', 'Turing', 'GeekHunter', 'Belvo', 'Epic'];
+      const uniqueExclusions = [...new Set(exclusions)].filter(term => !spamCompanies.includes(term));
+      
+      if (uniqueExclusions.length > 0) {
+        const formattedNegatives = uniqueExclusions.map(term => ` -"${term}"`).join('');
+        indeedQuery += formattedNegatives;
+      }
+    }
+    indeedParams.append('q', indeedQuery);
+    
+    // Smart Remote Override: se for remoto, busca em nível nacional ('remoto')
+    indeedParams.append('l', indeedLoc);
+
+    // Mapeamento de Job Types (Contrato) para Indeed
+    const INDEED_JOB_TYPES = {
+      clt: 'fulltime',
+      'full-time': 'fulltime',
+      fulltime: 'fulltime',
+      'part-time': 'parttime',
+      pj: 'contract',
+      freelance: 'contract',
+      contract: 'contract',
+      temporario: 'temporary',
+      estagio: 'internship',
+      internship: 'internship',
+    };
+    // Multi-select: Injeta todos os contratos selecionados na URL
+    if (jobTypesArr.length) {
+      jobTypesArr.forEach(t => {
+        const code = t && INDEED_JOB_TYPES[t.toLowerCase()];
+        if (code) indeedParams.append('jt', code);
+      });
+    }
+
+    // Mapeamento de Nível de Experiência para Indeed (explvl)
+    const INDEED_EXP_LEVELS = {
+      estagio: 'entry_level',
+      intern: 'entry_level',
+      junior: 'entry_level',
+      pleno: 'mid_level',
+      mid: 'mid_level',
+      senior: 'senior_level',
+    };
+    // Multi-select: Injeta todos os níveis de experiência selecionados na URL
+    if (experienceLevelsArr.length) {
+      experienceLevelsArr.forEach(l => {
+        const code = l && INDEED_EXP_LEVELS[l.toLowerCase()];
+        if (code) indeedParams.append('explvl', code);
+      });
+    }
+
+    // Mapeamento de período de tempo para Indeed (fromage em dias)
+    const indeedTimeMap = {
+      '30min': 1, '1h': 1, '2h': 1, '3h': 1, '6h': 1, '12h': 1,
+      '24h': 1, '2d': 2, '3d': 3, '7d': 7, '14d': 14, '30d': 30,
+    };
+    const fromageVal = indeedTimeMap[period] || 3; // Padrão 3 dias se não especificado
+    indeedParams.append('fromage', fromageVal);
+
+    // Ordenação e Distância
+    indeedParams.append('sort', sortCode === 'DD' ? 'date' : 'relevance');
+    if (distance) indeedParams.append('radius', distance);
+
+    const indeedUrl = `https://br.indeed.com/jobs?${indeedParams.toString()}`;
+
+    // 2. CONSTRUTOR GUPY (ESTRUTURA HACK SPA PORTAL)
+    const GUPY_STATE_MAP = {
+      'sao paulo': 'São Paulo',
+      'sao paulo cidade': 'São Paulo',
+      'campinas': 'São Paulo',
+      'santos': 'São Paulo',
+      'osasco': 'São Paulo',
+      'rio de janeiro': 'Rio de Janeiro',
+      'brasilia': 'Distrito Federal',
+      'belo horizonte': 'Minas Gerais',
+      'salvador': 'Bahia',
+      'fortaleza': 'Ceará',
+      'manaus': 'Amazonas',
+      'curitiba': 'Paraná',
+      'recife': 'Pernambuco',
+      'porto alegre': 'Rio Grande do Sul',
+      'goiania': 'Goiás',
+      'florianopolis': 'Santa Catarina',
+      'vitoria': 'Espírito Santo'
+    };
+
+    let gupyState = null;
+    if (location) {
+      const normLoc = location.toLowerCase().trim();
+      gupyState = GUPY_STATE_MAP[normLoc] || location.replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    const gupyParts = [];
+    gupyParts.push('sortBy=publishedDate');
+    gupyParts.push('sortOrder=desc');
+    gupyParts.push(`term=${encodeURIComponent(rawKeywords || keywords)}`);
+
+    // Smart Remote Override: se for remoto, remove state/city físico para buscar nacional
+    if (!isRemote && gupyState && location.toLowerCase() !== 'brasil') {
+      gupyParts.push(`state=${encodeURIComponent(gupyState)}`);
+    }
+
+    if (isRemote) {
+      gupyParts.push('workplaceTypes[]=remote');
+    } else {
+      if (workModesArr.includes('3') || (workMode && (workMode.includes('hibrido') || workMode.includes('hybrid')))) {
+        gupyParts.push('workplaceTypes[]=hybrid');
+      } else if (workModesArr.includes('1') || (workMode && (workMode.includes('presencial') || workMode.includes('onsite')))) {
+        gupyParts.push('workplaceTypes[]=on-site');
+      }
+    }
+
+    const gupyUrl = `https://portal.gupy.io/job-search/${gupyParts.join('&')}`;
+    // ---------------------------------------------------------------------
 
     return {
       main: `${baseUrl}?${searchParams.toString()}`,
@@ -110,7 +269,9 @@ export class UrlBuilderService {
       fallback3d: buildWithPeriod(259200),
       postsVaga: buildPostUrl('vaga', rawKeywords || keywords),
       postsHiring: buildPostUrl('contratando', rawKeywords || keywords),
-      postsCurriculo: buildPostUrl('curriculo', rawKeywords || keywords)
+      postsCurriculo: buildPostUrl('curriculo', rawKeywords || keywords),
+      indeed: indeedUrl,
+      gupy: gupyUrl
     };
   }
 }

@@ -282,7 +282,7 @@ export function ResultCard({ result }: ResultCardProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Resume Paste (with cloud-persistence library) */}
                   <div className="space-y-2">
-                    <div className="h-7 flex items-center justify-between">
+                    <div className="min-h-7 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 sm:pb-0">
                       <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                         <FileText className="w-3.5 h-3.5 text-primary" />
                         Cole seu Currículo / Experiências
@@ -343,7 +343,7 @@ export function ResultCard({ result }: ResultCardProps) {
 
                   {/* Job Description paste */}
                   <div className="space-y-2">
-                    <div className="h-7 flex items-center justify-between">
+                    <div className="min-h-7 flex items-center justify-between">
                       <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                         <Terminal className="w-3.5 h-3.5 text-accent" />
                         Cole a Descrição da Vaga que Encontrou
@@ -600,9 +600,11 @@ export function ResultCard({ result }: ResultCardProps) {
                 href={result.urls.main}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 h-13 bg-primary hover:brightness-110 active:scale-98 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-primary/20 group cursor-pointer"
+                className="flex-1 h-13 bg-[#0A66C2] hover:bg-[#084e96] active:scale-98 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#0A66C2]/20 group cursor-pointer"
               >
-                <ExternalLink className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                <svg className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
                 <span>Abrir Busca no LinkedIn</span>
               </a>
               {result.urls.express && (isPro || !clickedFeatures.includes('express')) ? (
@@ -611,7 +613,7 @@ export function ResultCard({ result }: ResultCardProps) {
                   onClick={() => handleFeatureClick('express')}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 h-13 glass hover:bg-secondary active:scale-98 text-foreground rounded-xl font-bold flex items-center justify-center gap-2 transition-all group cursor-pointer border border-border/80"
+                  className="flex-1 h-13 bg-secondary/80 hover:bg-secondary active:scale-98 text-foreground hover:text-primary rounded-xl font-bold flex items-center justify-center gap-2 transition-all group cursor-pointer border border-border/80"
                 >
                   <Zap className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
                   <span>Busca Express (Candidatura Direta)</span>
@@ -619,9 +621,9 @@ export function ResultCard({ result }: ResultCardProps) {
               ) : (
                 <button
                   onClick={() => router.push('/upgrade')}
-                  className="flex-1 h-13 glass text-muted-foreground/60 border border-dashed border-border/80 hover:border-primary/50 hover:text-primary rounded-xl font-extrabold flex items-center justify-center gap-2 transition-all group cursor-pointer"
+                  className="flex-1 h-13 bg-secondary/30 hover:bg-secondary/50 text-muted-foreground/75 border border-dashed border-border/80 hover:border-primary/30 hover:text-primary rounded-xl font-extrabold flex items-center justify-center gap-2 transition-all group cursor-pointer"
                 >
-                  <Lock className="h-5 w-5 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                  <Lock className="h-5 w-5 text-muted-foreground/45 group-hover:text-primary transition-colors" />
                   <span>Ativar Busca Express (PRO)</span>
                 </button>
               )}
@@ -633,12 +635,72 @@ export function ResultCard({ result }: ResultCardProps) {
               <div>
                 <strong className="text-foreground uppercase tracking-wide text-[10px] block mb-1">O que é a Busca Express?</strong>
                 <p className="text-[12px]">
-                  A Busca Express ativa instantaneamente o filtro de <strong>Candidatura Simplificada (Easy Apply)</strong> no LinkedIn.
+                          A Busca Express ativa instantaneamente o filtro de <strong>Candidatura Simplificada (Easy Apply)</strong> no LinkedIn.
                   Isso permite que você envie sua candidatura com apenas <strong>1 clique</strong> em segundos usando seu currículo anexado.
                   Você pula totalmente os formulários externos cansativos (como Gupy, Greenhouse ou Lever) que demoram até 30 minutos por vaga!
                 </p>
               </div>
             </div>
+
+          {/* Multi-Engine Scanner Section */}
+          <div className="p-4.5 bg-primary/5 border border-primary/15 rounded-2xl space-y-4 animate-in fade-in duration-300">
+            <div className="space-y-1">
+              <span className="text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                🚀 Multi-Scanner de Vagas Ativo (Gupy & Indeed)
+              </span>
+              <p className="text-[12px] text-muted-foreground leading-relaxed">
+                Nossa IA mapeou dinamicamente sua busca para os maiores portais de recrutamento nacionais. Abra abaixo com os mesmos filtros e termos inteligentes aplicados:
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {result.urls.indeed && (isPro || !clickedFeatures.includes('indeed')) ? (
+                <a
+                  href={result.urls.indeed}
+                  onClick={() => handleFeatureClick('indeed')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-13 bg-[#2557a7] hover:bg-[#1f488c] active:scale-98 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#2557a7]/20 group cursor-pointer"
+                >
+                  <svg className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 280 400" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M135.3,12.7C176.9-1.9,224.5-1.1,260,28.9c6.6,6.1,14.2,13.6,17.1,22.7c3.7,11.2-12.5-1.1-14.9-2.8c-11.6-7.4-23.2-13.6-36.3-17.9c-70-21-136.3,16.9-177.5,76.1c-16.9,26-28.2,53.4-37.4,83.6c-0.9,3.3-1.8,7.6-3.7,10.5c-1.8,3.3-0.7-8.8-0.7-9.4c1.5-12.5,4.1-24.5,7.2-36.6C32.9,90.9,74.9,37.3,135.3,12.7z" />
+                    <path d="M216,128.3c0,27.3-22.1,49.5-49.4,49.5s-49.4-22.1-49.4-49.5s22.1-49.5,49.4-49.5S216,100.9,216,128.3z" />
+                    <path d="M134.9,356.5V213c4.2,0.4,8.3,0.6,12.3,0.6c20.1,0,38.9-5.3,54.9-14.5v157.5c0,13.4-3.1,23.4-9.4,30c-6.3,6.6-14.4,9.9-24.5,9.9c-9.8,0-17.7-3.3-23.9-10.1C138.3,379.5,134.9,369.8,134.9,356.5z" />
+                  </svg>
+                  <span>Abrir Busca no Indeed</span>
+                </a>
+              ) : (
+                <button
+                  onClick={() => router.push('/upgrade')}
+                  className="h-13 bg-secondary/30 hover:bg-secondary/50 text-muted-foreground/75 border border-dashed border-border/80 hover:border-primary/30 hover:text-primary rounded-xl font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer w-full"
+                >
+                  <Lock className="w-5 h-5 text-muted-foreground/45" />
+                  <span>Abrir Busca no Indeed (PRO)</span>
+                </button>
+              )}
+              {result.urls.gupy && (isPro || !clickedFeatures.includes('gupy')) ? (
+                <a
+                  href={result.urls.gupy}
+                  onClick={() => handleFeatureClick('gupy')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-13 bg-[#0082f0] hover:bg-[#006ecb] active:scale-98 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#0082f0]/20 group cursor-pointer"
+                >
+                  <svg className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.3 12.3c0 .8-.2 1.4-.6 1.9-.4.5-.9.9-1.6 1.1-.7.2-1.5.3-2.4.3-1.1 0-2.1-.2-2.9-.6v-1.8c.8.5 1.7.7 2.6.7.8 0 1.4-.2 1.8-.5.4-.3.6-.8.6-1.4v-.6c-.5.6-1.2.9-2.1.9-1 0-1.8-.4-2.4-1.2-.6-.8-.9-1.9-.9-3.2s.3-2.4.9-3.2c.6-.8 1.4-1.2 2.4-1.2.9 0 1.6.3 2.1.9V8.2h2v6.4zm-4.2-1.9c0 .7.1 1.2.4 1.6.3.4.7.6 1.2.6s.9-.2 1.2-.6c.3-.4.4-.9.4-1.6V12c0-.7-.1-1.2-.4-1.6-.3-.4-.7-.6-1.2-.6s-.9.2-1.2.6c-.3.4-.4.9-.4 1.6v.4z"/>
+                  </svg>
+                  <span>Abrir Busca na Gupy</span>
+                </a>
+              ) : (
+                <button
+                  onClick={() => router.push('/upgrade')}
+                  className="h-13 bg-secondary/30 hover:bg-secondary/50 text-muted-foreground/75 border border-dashed border-border/80 hover:border-primary/30 hover:text-primary rounded-xl font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer w-full"
+                >
+                  <Lock className="w-5 h-5 text-muted-foreground/45" />
+                  <span>Abrir Busca na Gupy (PRO)</span>
+                </button>
+              )}
+            </div>
+          </div>
           </div>
 
           {/* Feed Posts (Vagas Ocultas) */}

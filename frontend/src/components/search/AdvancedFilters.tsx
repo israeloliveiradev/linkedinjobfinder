@@ -40,9 +40,14 @@ export function AdvancedFilters() {
       {/* Localização e Período */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-primary" /> Localização
-          </label>
+          <div className="flex items-center justify-between gap-2">
+            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex flex-wrap items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-primary" /> Localização
+              <span className="text-[8px] font-bold text-muted-foreground/35 tracking-wider uppercase ml-1">
+                (LinkedIn, Gupy & Indeed)
+              </span>
+            </label>
+          </div>
           <select 
             value={manualFilters.location}
             onChange={(e) => setManualFilter('location', e.target.value)}
@@ -62,9 +67,14 @@ export function AdvancedFilters() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-accent" /> Período Postado
-          </label>
+          <div className="flex items-center justify-between gap-2">
+            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex flex-wrap items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-accent" /> Período Postado
+              <span className="text-[8px] font-bold text-muted-foreground/35 tracking-wider uppercase ml-1">
+                (LinkedIn, Gupy & Indeed)
+              </span>
+            </label>
+          </div>
           <select 
             value={manualFilters.period}
             onChange={(e) => setManualFilter('period', e.target.value)}
@@ -79,9 +89,14 @@ export function AdvancedFilters() {
 
       {/* Modalidade (Chips) */}
       <div className="space-y-2.5">
-        <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-          <Laptop className="w-3.5 h-3.5 text-primary" /> Modalidade de Trabalho
-        </label>
+        <div className="flex items-center justify-between gap-2">
+          <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex flex-wrap items-center gap-1.5">
+            <Laptop className="w-3.5 h-3.5 text-primary" /> Modalidade de Trabalho
+            <span className="text-[8px] font-bold text-muted-foreground/35 tracking-wider uppercase ml-1">
+              (LinkedIn, Gupy & Indeed)
+            </span>
+          </label>
+        </div>
         <div className="flex flex-wrap gap-2">
           {WORK_MODE_OPTIONS.map(opt => {
             const isActive = manualFilters.workModes.includes(opt.value);
@@ -105,9 +120,14 @@ export function AdvancedFilters() {
 
       {/* Experiência (Chips) */}
       <div className="space-y-2.5">
-        <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-          <GraduationCap className="w-3.5 h-3.5 text-accent" /> Nível de Experiência
-        </label>
+        <div className="flex items-center justify-between gap-2">
+          <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex flex-wrap items-center gap-1.5">
+            <GraduationCap className="w-3.5 h-3.5 text-accent" /> Nível de Experiência
+            <span className="text-[8px] font-bold text-muted-foreground/35 tracking-wider uppercase ml-1">
+              (LinkedIn & Indeed)
+            </span>
+          </label>
+        </div>
         <div className="flex flex-wrap gap-2">
           {EXPERIENCE_OPTIONS.map(opt => {
             const isActive = manualFilters.experienceLevels.includes(opt.value);
@@ -131,9 +151,14 @@ export function AdvancedFilters() {
 
       {/* Tipo de Vaga (Chips) */}
       <div className="space-y-2.5">
-        <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-          <Briefcase className="w-3.5 h-3.5 text-emerald-500" /> Tipo de Contrato
-        </label>
+        <div className="flex items-center justify-between gap-2">
+          <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex flex-wrap items-center gap-1.5">
+            <Briefcase className="w-3.5 h-3.5 text-emerald-500" /> Tipo de Contrato
+            <span className="text-[8px] font-bold text-muted-foreground/35 tracking-wider uppercase ml-1">
+              (LinkedIn & Indeed)
+            </span>
+          </label>
+        </div>
         <div className="flex flex-wrap gap-2">
           {JOB_TYPE_OPTIONS.map(opt => {
             const isActive = manualFilters.jobTypes.includes(opt.value);
@@ -157,34 +182,48 @@ export function AdvancedFilters() {
 
       <div className="w-full border-t border-border/80 pt-5 mt-5 space-y-5">
         {/* Anti-Spam de Consultorias */}
-        <div className="flex items-center justify-between gap-4 bg-card/45 p-4 rounded-2xl border border-border/80 shadow-sm transition-all hover:border-red-500/20">
-          <div className="space-y-1 flex-1">
-            <span className="text-xs font-extrabold text-foreground flex items-center gap-1.5">🛡️ Bloqueio de Spam (Consultorias & RH)</span>
+        <div className="flex flex-col gap-4 bg-card/45 p-4 rounded-2xl border border-border/80 shadow-sm transition-all hover:border-red-500/20">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-extrabold text-foreground flex flex-wrap items-center gap-1.5">
+              🛡️ Bloqueio de Spam (Consultorias & RH)
+              <span className="text-[8px] font-bold text-muted-foreground/35 tracking-wider uppercase ml-1">
+                (Apenas LinkedIn)
+              </span>
+            </span>
+          </div>
+          <div className="flex items-start justify-between gap-4">
             <span className="text-[11px] text-muted-foreground block leading-relaxed max-w-xl">
               Expurgue automaticamente da busca agências de recrutamento massivo e consultorias terceirizadas (BairesDev, Turing, GeekHunter). Veja apenas contratações diretas.
             </span>
+            <div className="pt-0.5">
+              <button
+                onClick={() => setManualFilter('antiSpam', !manualFilters.antiSpam)}
+                className={cn(
+                  "relative inline-flex h-5.5 w-10 shrink-0 items-center rounded-full transition-colors cursor-pointer",
+                  manualFilters.antiSpam ? "bg-red-500 shadow-md shadow-red-500/25" : "bg-muted"
+                )}
+              >
+                <span
+                  className={cn(
+                    "inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform",
+                    manualFilters.antiSpam ? "translate-x-5.5" : "translate-x-1"
+                  )}
+                />
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => setManualFilter('antiSpam', !manualFilters.antiSpam)}
-            className={cn(
-              "relative inline-flex h-5.5 w-10 shrink-0 items-center rounded-full transition-colors cursor-pointer",
-              manualFilters.antiSpam ? "bg-red-500 shadow-md shadow-red-500/25" : "bg-muted"
-            )}
-          >
-            <span
-              className={cn(
-                "inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform",
-                manualFilters.antiSpam ? "translate-x-5.5" : "translate-x-1"
-              )}
-            />
-          </button>
         </div>
 
         {/* Excluir Palavras-Chave */}
         <div className="space-y-2">
-          <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">
-            ❌ Excluir Palavras-Chave (Filtro Negativo)
-          </label>
+          <div className="flex items-center justify-between gap-2">
+            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex flex-wrap items-center gap-1.5">
+              ❌ Excluir Palavras-Chave (Filtro Negativo)
+              <span className="text-[8px] font-bold text-muted-foreground/35 tracking-wider uppercase ml-1">
+                (LinkedIn & Indeed)
+              </span>
+            </label>
+          </div>
           <input
             type="text"
             value={manualFilters.negativeKeywords}
@@ -193,6 +232,10 @@ export function AdvancedFilters() {
             className="w-full bg-secondary/45 border border-border/80 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-500 transition-all text-foreground placeholder:text-muted-foreground/60"
           />
         </div>
+      </div>
+
+      <div className="pt-2.5 flex items-center gap-2 justify-center text-[10px] text-muted-foreground/60 border-t border-border/40 mt-4 select-none">
+        <span>💡 Nota: O LinkedIn suporta 100% dos parâmetros. Indeed e Gupy adaptam a busca com base nos filtros suportados.</span>
       </div>
     </div>
   );

@@ -112,7 +112,11 @@ router.get('/users', requireAdmin, async (req, res) => {
         used_express: false,
         used_posts_vaga: false,
         used_posts_hiring: false,
-        used_posts_curriculo: false
+        used_posts_curriculo: false,
+        indeed_count: 0,
+        gupy_count: 0,
+        extra_indeed_credits: 0,
+        extra_gupy_credits: 0
       };
       return {
         ...u,
@@ -124,7 +128,11 @@ router.get('/users', requireAdmin, async (req, res) => {
         usedExpress: sub.used_express || false,
         usedPostsVaga: sub.used_posts_vaga || false,
         usedPostsHiring: sub.used_posts_hiring || false,
-        usedPostsCurriculo: sub.used_posts_curriculo || false
+        usedPostsCurriculo: sub.used_posts_curriculo || false,
+        indeedCount: sub.indeed_count || 0,
+        gupyCount: sub.gupy_count || 0,
+        extraIndeedCredits: sub.extra_indeed_credits || 0,
+        extraGupyCredits: sub.extra_gupy_credits || 0
       };
     });
     
@@ -178,7 +186,7 @@ router.put('/users/:userId/plan', requireAdmin, async (req, res) => {
 router.post('/users/:userId/unlock', requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
-    const { feature } = req.body; // 'copilot', 'express', 'feed'
+    const { feature } = req.body; // 'copilot', 'express', 'feed', 'indeed', 'gupy'
     
     // Fetch current user subscription
     const { data: sub, error: subError } = await supabase
@@ -201,7 +209,11 @@ router.post('/users/:userId/unlock', requireAdmin, async (req, res) => {
       used_express: false, 
       used_posts_vaga: false, 
       used_posts_hiring: false, 
-      used_posts_curriculo: false 
+      used_posts_curriculo: false,
+      indeed_count: 0,
+      gupy_count: 0,
+      extra_indeed_credits: 0,
+      extra_gupy_credits: 0
     };
     
     let updates = {};
@@ -219,6 +231,16 @@ router.post('/users/:userId/unlock', requireAdmin, async (req, res) => {
         used_posts_vaga: false,
         used_posts_hiring: false,
         used_posts_curriculo: false
+      };
+    } else if (feature === 'indeed') {
+      updates = {
+        extra_indeed_credits: (currentSub.extra_indeed_credits || 0) + 1,
+        indeed_count: Math.max(0, (currentSub.indeed_count || 0) - 1) // Decrement current usage to immediately unlock too
+      };
+    } else if (feature === 'gupy') {
+      updates = {
+        extra_gupy_credits: (currentSub.extra_gupy_credits || 0) + 1,
+        gupy_count: Math.max(0, (currentSub.gupy_count || 0) - 1) // Decrement current usage to immediately unlock too
       };
     } else {
       return res.status(400).json({ error: 'Funcionalidade inválida' });

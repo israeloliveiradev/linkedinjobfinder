@@ -21,7 +21,7 @@ export default function Home() {
           Localizador de Vagas <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-black">Profissional</span>
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-          Mapeie o feed e os bancos de dados do LinkedIn de forma cirúrgica. Filtre consultorias de massa, expurgue spam de recrutamento e identifique vagas com candidatura simplificada instantânea.
+          Mapeie o feed e os bancos de dados do LinkedIn, Gupy e Indeed de forma cirúrgica. Filtre consultorias de massa, expurgue spam de recrutamento e encontre as melhores vagas de forma instantânea.
         </p>
       </div>
 
@@ -64,7 +64,7 @@ export default function Home() {
         <div className="w-full max-w-4xl space-y-6 animate-in fade-in duration-500 text-center py-6">
           <div className="inline-flex items-center gap-3 px-4 py-2 bg-primary/10 border border-primary/20 rounded-2xl text-xs sm:text-sm font-bold text-primary animate-pulse shadow-sm">
             <Loader2 className="h-4 w-4 animate-spin shrink-0" />
-            <span>Escaneando e blindando seus links no LinkedIn agora...</span>
+            <span>Escaneando e blindando seus links no LinkedIn, Gupy & Indeed agora...</span>
           </div>
           <div className="glass p-8 rounded-3xl space-y-6 text-left">
             <div className="flex justify-between items-center">

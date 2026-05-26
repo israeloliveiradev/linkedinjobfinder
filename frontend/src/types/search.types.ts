@@ -31,6 +31,8 @@ export interface SearchResult {
     postsVaga?: string;
     postsHiring?: string;
     postsCurriculo?: string;
+    indeed?: string;
+    gupy?: string;
   };
   filtersApplied: number;
 }

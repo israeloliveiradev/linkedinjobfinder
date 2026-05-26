@@ -145,7 +145,7 @@ export default function CentralMasterPage() {
     }
   };
 
-  const handleUnlockFeature = async (userId: string, feature: 'copilot' | 'express' | 'feed') => {
+  const handleUnlockFeature = async (userId: string, feature: 'copilot' | 'express' | 'feed' | 'indeed' | 'gupy') => {
     try {
       const res = await api.post(`/api/admin/users/${userId}/unlock`, { feature });
       alert(res.data.message || 'Permissão liberada com absoluto sucesso!');
@@ -376,6 +376,20 @@ export default function CentralMasterPage() {
                               {u.usedPostsVaga || u.usedPostsHiring || u.usedPostsCurriculo ? 'Sim (Bloqueado)' : 'Não (Livre)'}
                             </span>
                           </div>
+                          <div className="flex justify-between items-center text-muted-foreground">
+                            <span>Buscas na Gupy:</span>
+                            <span className="font-bold text-foreground">
+                              {u.gupyCount || 0} / {2 + (u.extraGupyCredits || 0)}
+                              {u.extraGupyCredits > 0 && <span className="text-primary font-black ml-1">({u.extraGupyCredits} extra)</span>}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-muted-foreground">
+                            <span>Buscas no Indeed:</span>
+                            <span className="font-bold text-foreground">
+                              {u.indeedCount || 0} / {2 + (u.extraIndeedCredits || 0)}
+                              {u.extraIndeedCredits > 0 && <span className="text-primary font-black ml-1">({u.extraIndeedCredits} extra)</span>}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -398,14 +412,14 @@ export default function CentralMasterPage() {
                         </button>
 
                         {/* Custom Permission Unlock Buttons */}
-                        <div className="grid grid-cols-3 gap-1 pt-1">
+                        <div className="grid grid-cols-5 gap-1 pt-1">
                           <button
                             onClick={() => handleUnlockFeature(u.id, 'copilot')}
                             className="h-8 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[8px] border border-primary/20 transition-all cursor-pointer flex items-center justify-center gap-0.5"
                             title="Liberar +1 uso do Copiloto de IA"
                           >
                             <Sparkles className="w-2 h-2 shrink-0" />
-                            +1 Copiloto
+                            +1 Cop
                           </button>
                           <button
                             onClick={() => handleUnlockFeature(u.id, 'express')}
@@ -413,7 +427,7 @@ export default function CentralMasterPage() {
                             title="Resetar bloqueio e liberar mais 1 clique no Express"
                           >
                             <Sliders className="w-2 h-2 shrink-0" />
-                            Lib Express
+                            Lib Exp
                           </button>
                           <button
                             onClick={() => handleUnlockFeature(u.id, 'feed')}
@@ -422,6 +436,22 @@ export default function CentralMasterPage() {
                           >
                             <Activity className="w-2 h-2 shrink-0" />
                             Lib Feed
+                          </button>
+                          <button
+                            onClick={() => handleUnlockFeature(u.id, 'gupy')}
+                            className="h-8 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 font-bold text-[8px] border border-cyan-500/20 transition-all cursor-pointer flex items-center justify-center gap-0.5"
+                            title="Liberar +1 busca de Gupy"
+                          >
+                            <Sliders className="w-2 h-2 shrink-0" />
+                            +1 Gupy
+                          </button>
+                          <button
+                            onClick={() => handleUnlockFeature(u.id, 'indeed')}
+                            className="h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 font-bold text-[8px] border border-blue-500/20 transition-all cursor-pointer flex items-center justify-center gap-0.5"
+                            title="Liberar +1 busca de Indeed"
+                          >
+                            <Activity className="w-2 h-2 shrink-0" />
+                            +1 Ind
                           </button>
                         </div>
                       </div>

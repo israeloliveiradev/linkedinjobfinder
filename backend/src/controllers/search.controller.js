@@ -142,10 +142,11 @@ export class SearchController {
       const allUrls = this.urlBuilderService.build({ 
         ...parsedParams, 
         keywords: finalBooleanQuery,
-        rawKeywords: parsedParams.keywords 
+        rawKeywords: parsedParams.keywords,
+        exclusions: exclusions
       });
 
-      // Filter URLs based on subscription tier (Free gets 5 complete searches but only 1 Express and 1 of each of the other 3)
+      // Filter URLs based on subscription tier (Free gets 5 complete searches but only 1 Express, 1 of each of the other 3, and 2 Indeed/Gupy searches)
       const urls = isPro ? allUrls : {
         main: allUrls.main,
         express: sub?.used_express ? null : allUrls.express,
@@ -154,7 +155,9 @@ export class SearchController {
         fallback3d: null,
         postsVaga: sub?.used_posts_vaga ? null : allUrls.postsVaga,
         postsHiring: sub?.used_posts_hiring ? null : allUrls.postsHiring,
-        postsCurriculo: sub?.used_posts_curriculo ? null : allUrls.postsCurriculo
+        postsCurriculo: sub?.used_posts_curriculo ? null : allUrls.postsCurriculo,
+        indeed: (sub && sub.indeed_count >= 2 + (sub.extra_indeed_credits || 0)) ? null : allUrls.indeed,
+        gupy: (sub && sub.gupy_count >= 2 + (sub.extra_gupy_credits || 0)) ? null : allUrls.gupy
       };
 
       // 4. Save to History
@@ -198,27 +201,47 @@ export class SearchController {
         return res.status(401).json({ error: 'Não autorizado' });
       }
       
-      const allowedFeatures = ['express', 'postsVaga', 'postsHiring', 'postsCurriculo'];
+      const allowedFeatures = ['express', 'postsVaga', 'postsHiring', 'postsCurriculo', 'indeed', 'gupy'];
       if (!allowedFeatures.includes(feature)) {
         return res.status(400).json({ error: 'Recurso inválido' });
       }
 
-      const columnMap = {
-        express: 'used_express',
-        postsVaga: 'used_posts_vaga',
-        postsHiring: 'used_posts_hiring',
-        postsCurriculo: 'used_posts_curriculo'
-      };
+      if (feature === 'indeed' || feature === 'gupy') {
+        const columnName = feature === 'indeed' ? 'indeed_count' : 'gupy_count';
+        
+        // Fetch current count to increment safely
+        const { data: sub } = await supabase
+          .from('subscriptions')
+          .select(columnName)
+          .eq('user_id', userId)
+          .single();
+          
+        const currentCount = sub ? (sub[columnName] || 0) : 0;
+        
+        const { error } = await supabase
+          .from('subscriptions')
+          .update({ [columnName]: currentCount + 1 })
+          .eq('user_id', userId);
+          
+        if (error) throw error;
+      } else {
+        const columnMap = {
+          express: 'used_express',
+          postsVaga: 'used_posts_vaga',
+          postsHiring: 'used_posts_hiring',
+          postsCurriculo: 'used_posts_curriculo'
+        };
 
-      const columnName = columnMap[feature];
+        const columnName = columnMap[feature];
 
-      const { error } = await supabase
-        .from('subscriptions')
-        .update({ [columnName]: true })
-        .eq('user_id', userId);
+        const { error } = await supabase
+          .from('subscriptions')
+          .update({ [columnName]: true })
+          .eq('user_id', userId);
 
-      if (error) {
-        throw error;
+        if (error) {
+          throw error;
+        }
       }
 
       res.status(200).json({ success: true, message: `Recurso ${feature} marcado como usado.` });

@@ -3,7 +3,7 @@ import { config } from './env.js';
 
 export const globalLimiter = rateLimit({
   windowMs: config.rateLimitWindowMs,
-  max: config.rateLimitMaxRequests,
+  max: config.nodeEnv === 'development' ? 1000 : config.rateLimitMaxRequests,
   message: {
     success: false,
     error: {
