@@ -9,7 +9,7 @@ import {
   LOCATION_OPTIONS 
 } from '@/constants/filters';
 import { cn } from '@/lib/utils';
-import { Clock, MapPin, Briefcase, GraduationCap, Laptop, SlidersHorizontal } from 'lucide-react';
+import { Clock, MapPin, Briefcase, GraduationCap, Laptop, SlidersHorizontal, Star } from 'lucide-react';
 
 export function AdvancedFilters() {
   const { manualFilters, setManualFilter } = useSearchStore();
@@ -37,8 +37,8 @@ export function AdvancedFilters() {
         </div>
       </div>
 
-      {/* Localização e Período */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Localização, Período e Avaliação */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
             <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex flex-wrap items-center gap-1.5">
@@ -83,6 +83,27 @@ export function AdvancedFilters() {
             {PERIOD_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value} className="bg-card text-foreground">{opt.label}</option>
             ))}
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex flex-wrap items-center gap-1.5">
+              <Star className="w-3.5 h-3.5 text-emerald-500" /> Nota da Empresa
+              <span className="text-[8px] font-bold text-muted-foreground/35 tracking-wider uppercase ml-1">
+                (Apenas Glassdoor)
+              </span>
+            </label>
+          </div>
+          <select 
+            value={manualFilters.minRating || '4.0'}
+            onChange={(e) => setManualFilter('minRating', e.target.value)}
+            className="w-full bg-secondary/45 border border-border/80 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-foreground cursor-pointer"
+          >
+            <option value="4.0" className="bg-card text-foreground">⭐ 4.0+ (Elite)</option>
+            <option value="3.5" className="bg-card text-foreground">⭐ 3.5+ (Excelente)</option>
+            <option value="3.0" className="bg-card text-foreground">⭐ 3.0+ (Boa)</option>
+            <option value="" className="bg-card text-foreground">Sem Limite</option>
           </select>
         </div>
       </div>

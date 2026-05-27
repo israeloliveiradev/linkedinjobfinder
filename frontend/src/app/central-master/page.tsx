@@ -145,7 +145,7 @@ export default function CentralMasterPage() {
     }
   };
 
-  const handleUnlockFeature = async (userId: string, feature: 'copilot' | 'express' | 'feed' | 'indeed' | 'gupy') => {
+  const handleUnlockFeature = async (userId: string, feature: 'copilot' | 'express' | 'feed' | 'indeed' | 'gupy' | 'glassdoor') => {
     try {
       const res = await api.post(`/api/admin/users/${userId}/unlock`, { feature });
       alert(res.data.message || 'Permissão liberada com absoluto sucesso!');
@@ -390,6 +390,13 @@ export default function CentralMasterPage() {
                               {u.extraIndeedCredits > 0 && <span className="text-primary font-black ml-1">({u.extraIndeedCredits} extra)</span>}
                             </span>
                           </div>
+                          <div className="flex justify-between items-center text-muted-foreground">
+                            <span>Buscas no Glassdoor:</span>
+                            <span className="font-bold text-foreground">
+                              {u.glassdoorCount || 0} / {2 + (u.extraGlassdoorCredits || 0)}
+                              {u.extraGlassdoorCredits > 0 && <span className="text-primary font-black ml-1">({u.extraGlassdoorCredits} extra)</span>}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -412,7 +419,7 @@ export default function CentralMasterPage() {
                         </button>
 
                         {/* Custom Permission Unlock Buttons */}
-                        <div className="grid grid-cols-5 gap-1 pt-1">
+                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 pt-1">
                           <button
                             onClick={() => handleUnlockFeature(u.id, 'copilot')}
                             className="h-8 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[8px] border border-primary/20 transition-all cursor-pointer flex items-center justify-center gap-0.5"
@@ -452,6 +459,14 @@ export default function CentralMasterPage() {
                           >
                             <Activity className="w-2 h-2 shrink-0" />
                             +1 Ind
+                          </button>
+                          <button
+                            onClick={() => handleUnlockFeature(u.id, 'glassdoor')}
+                            className="h-8 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 font-bold text-[8px] border border-emerald-500/20 transition-all cursor-pointer flex items-center justify-center gap-0.5"
+                            title="Liberar +1 busca de Glassdoor"
+                          >
+                            <Star className="w-2 h-2 shrink-0" />
+                            +1 Glass
                           </button>
                         </div>
                       </div>

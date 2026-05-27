@@ -11,5 +11,6 @@ export const searchSchema = Joi.object({
     jobTypes: Joi.array().items(Joi.string()).optional(),
     antiSpam: Joi.boolean().optional(),
     negativeKeywords: Joi.string().optional().allow(''),
+    minRating: Joi.string().optional().allow(''),
   }),
 });

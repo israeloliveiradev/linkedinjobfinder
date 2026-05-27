@@ -23,7 +23,8 @@ export class UrlBuilderService {
       easyApply,
       lowApplicants,
       company,
-      exclusions = []
+      exclusions = [],
+      minRating
     } = params;
 
     // --- MANTÉM O MOTOR DO LINKEDIN EXATAMENTE IGUAL ---
@@ -261,6 +262,45 @@ export class UrlBuilderService {
     const gupyUrl = `https://portal.gupy.io/job-search/${gupyParts.join('&')}`;
     // ---------------------------------------------------------------------
 
+    // 3. CONSTRUTOR GLASSDOOR (COM SMART REMOTE OVERRIDE)
+    let glassdoorLoc = 'Brasil';
+    if (isRemote) {
+      glassdoorLoc = 'remoto';
+    } else if (location) {
+      glassdoorLoc = location.toLowerCase().trim() === 'brasil' ? 'Brasil' : location;
+    }
+
+    const glassdoorParams = new URLSearchParams();
+    glassdoorParams.append('sc.keyword', rawKeywords || keywords);
+    glassdoorParams.append('loc', glassdoorLoc);
+
+    // Mapeamento de período de tempo para Glassdoor (fromage em dias)
+    const glassdoorTimeMap = {
+      '30min': 1, '1h': 1, '2h': 1, '3h': 1, '6h': 1, '12h': 1,
+      '24h': 1, '2d': 2, '3d': 3, '7d': 7, '14d': 14, '30d': 30,
+    };
+    const glassdoorFromageVal = glassdoorTimeMap[period] || 3;
+    glassdoorParams.append('fromAge', glassdoorFromageVal);
+
+    // Rating (Padrão 4.0 se omitido)
+    const finalRating = minRating !== undefined ? minRating : '4.0';
+    if (finalRating) {
+      glassdoorParams.append('minRating', finalRating);
+    }
+
+    // Easy Apply (Candidatura Simplificada)
+    if (easyApply) {
+      glassdoorParams.append('applicationType', '1');
+    }
+
+    // Remote Work Type
+    if (isRemote) {
+      glassdoorParams.append('remoteWorkType', '1');
+    }
+
+    const glassdoorUrl = `https://www.glassdoor.com.br/Job/jobs.htm?${glassdoorParams.toString()}`;
+    // ---------------------------------------------------------------------
+
     return {
       main: `${baseUrl}?${searchParams.toString()}`,
       express: `${baseUrl}?${searchParams.toString()}&f_AL=true`,
@@ -271,7 +311,8 @@ export class UrlBuilderService {
       postsHiring: buildPostUrl('contratando', rawKeywords || keywords),
       postsCurriculo: buildPostUrl('curriculo', rawKeywords || keywords),
       indeed: indeedUrl,
-      gupy: gupyUrl
+      gupy: gupyUrl,
+      glassdoor: glassdoorUrl
     };
   }
 }

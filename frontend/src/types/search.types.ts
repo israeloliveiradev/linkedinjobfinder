@@ -13,6 +13,7 @@ export interface ParsedParams {
   company: string | null;
   recruiterAdvice?: string;
   expandKeywords?: boolean;
+  minRating?: string;
 }
 
 export interface SearchResult {
@@ -33,6 +34,7 @@ export interface SearchResult {
     postsCurriculo?: string;
     indeed?: string;
     gupy?: string;
+    glassdoor?: string;
   };
   filtersApplied: number;
 }

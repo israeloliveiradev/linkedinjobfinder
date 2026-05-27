@@ -125,7 +125,7 @@ export default function UpgradePage() {
           Multiplique suas Entrevistas com o <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Acesso PRO</span>
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto animate-in fade-in slide-in-from-top-6 duration-600">
-          Varra o LinkedIn, Gupy & Indeed sem limites de cotas, garimpe vagas ocultas nos feeds dos recrutadores e conte com o Copiloto de I.A. para otimizar seu currículo para os filtros do ATS.
+          Varra o LinkedIn, Gupy, Indeed & Glassdoor sem limites de cotas, garimpe vagas ocultas nos feeds dos recrutadores e conte com o Copiloto de I.A. para otimizar seu currículo para os filtros do ATS.
         </p>
       </div>
 
@@ -149,7 +149,7 @@ export default function UpgradePage() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm text-foreground/80 font-semibold leading-relaxed">
                 <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <span><strong>5 Buscas Completas</strong> no LinkedIn e <strong>2 buscas gratuitas</strong> na Gupy e no Indeed</span>
+                <span><strong>5 Buscas Completas</strong> no LinkedIn e <strong>2 buscas gratuitas</strong> na Gupy, no Indeed e no Glassdoor</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-foreground/80 font-semibold leading-relaxed">
                 <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
@@ -244,7 +244,7 @@ export default function UpgradePage() {
             <ul className="space-y-3.5">
               <li className="flex items-start gap-3 text-sm text-foreground/90 font-semibold leading-relaxed">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span><strong>Varreduras de vagas ilimitadas</strong> no LinkedIn, Gupy & Indeed (sem bloqueio de limites diários ou mensais)</span>
+                <span><strong>Varreduras de vagas ilimitadas</strong> no LinkedIn, Gupy, Indeed & Glassdoor (sem bloqueio de limites diários ou mensais)</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-foreground/90 font-semibold leading-relaxed">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -364,7 +364,7 @@ export default function UpgradePage() {
             Quem usa, recomenda! 🚀
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-lg mx-auto">
-            Descubra como outros profissionais de tecnologia hackearam o processo de candidatura no LinkedIn, Gupy e Indeed.
+            Descubra como outros profissionais de tecnologia hackearam o processo de candidatura no LinkedIn, Gupy, Indeed e Glassdoor.
           </p>
         </div>
 

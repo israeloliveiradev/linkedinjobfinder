@@ -94,6 +94,7 @@ export class SearchController {
         if (manualFilters.workModes && manualFilters.workModes.length > 0) parsedParams.workMode = manualFilters.workModes;
         if (manualFilters.experienceLevels && manualFilters.experienceLevels.length > 0) parsedParams.experienceLevel = manualFilters.experienceLevels;
         if (manualFilters.jobTypes && manualFilters.jobTypes.length > 0) parsedParams.jobType = manualFilters.jobTypes;
+        if (manualFilters.minRating !== undefined) parsedParams.minRating = manualFilters.minRating;
       }
 
       // 2. Keyword Expansion (Only for PRO)
@@ -157,7 +158,8 @@ export class SearchController {
         postsHiring: sub?.used_posts_hiring ? null : allUrls.postsHiring,
         postsCurriculo: sub?.used_posts_curriculo ? null : allUrls.postsCurriculo,
         indeed: (sub && sub.indeed_count >= 2 + (sub.extra_indeed_credits || 0)) ? null : allUrls.indeed,
-        gupy: (sub && sub.gupy_count >= 2 + (sub.extra_gupy_credits || 0)) ? null : allUrls.gupy
+        gupy: (sub && sub.gupy_count >= 2 + (sub.extra_gupy_credits || 0)) ? null : allUrls.gupy,
+        glassdoor: (sub && sub.glassdoor_count >= 2 + (sub.extra_glassdoor_credits || 0)) ? null : allUrls.glassdoor
       };
 
       // 4. Save to History
@@ -201,13 +203,13 @@ export class SearchController {
         return res.status(401).json({ error: 'Não autorizado' });
       }
       
-      const allowedFeatures = ['express', 'postsVaga', 'postsHiring', 'postsCurriculo', 'indeed', 'gupy'];
+      const allowedFeatures = ['express', 'postsVaga', 'postsHiring', 'postsCurriculo', 'indeed', 'gupy', 'glassdoor'];
       if (!allowedFeatures.includes(feature)) {
         return res.status(400).json({ error: 'Recurso inválido' });
       }
 
-      if (feature === 'indeed' || feature === 'gupy') {
-        const columnName = feature === 'indeed' ? 'indeed_count' : 'gupy_count';
+      if (feature === 'indeed' || feature === 'gupy' || feature === 'glassdoor') {
+        const columnName = feature === 'indeed' ? 'indeed_count' : (feature === 'gupy' ? 'gupy_count' : 'glassdoor_count');
         
         // Fetch current count to increment safely
         const { data: sub } = await supabase

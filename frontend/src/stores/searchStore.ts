@@ -9,6 +9,7 @@ export interface ManualFilters {
   location: string;
   antiSpam: boolean;
   negativeKeywords: string;
+  minRating: string;
 }
 
 interface SearchState {
@@ -31,6 +32,7 @@ const initialFilters: ManualFilters = {
   location: 'brasil',
   antiSpam: true, // Habilitado por padrão porque consultorias de spam são horríveis!
   negativeKeywords: '',
+  minRating: '4.0',
 };
 
 export const useSearchStore = create<SearchState>((set) => ({
