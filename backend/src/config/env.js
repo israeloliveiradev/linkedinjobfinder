@@ -3,9 +3,13 @@ import path from 'path';
 
 dotenv.config();
 
-const requiredEnvs = ['GROQ_API_KEY', 'LLM_MODEL', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
-
 export const validateEnv = () => {
+  const requiredEnvs = ['GROQ_API_KEY', 'LLM_MODEL'];
+  
+  if (!process.env.DATABASE_URL) {
+    requiredEnvs.push('SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY');
+  }
+
   const missing = requiredEnvs.filter(env => !process.env[env]);
 
   if (missing.length > 0) {
@@ -15,6 +19,7 @@ export const validateEnv = () => {
 
   console.log('✅ [Config] Variáveis de ambiente validadas.');
 };
+
 
 export const config = {
   port: process.env.PORT || 3001,
