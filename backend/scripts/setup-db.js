@@ -12,10 +12,16 @@ import path from 'path';
 const { Pool } = pg;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const useSsl = (process.env.DATABASE_URL || '').includes('supabase.co') || 
+               (process.env.DATABASE_URL || '').includes('render.com') || 
+               (process.env.DATABASE_URL || '').includes('neon.tech') || 
+               process.env.DB_SSL === 'true';
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  ssl: useSsl ? { rejectUnauthorized: false } : false,
 });
+
 
 const schemaPath = path.join(__dirname, '../database/schema.sql');
 const schema = readFileSync(schemaPath, 'utf-8');

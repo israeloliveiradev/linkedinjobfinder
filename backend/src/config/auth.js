@@ -3,10 +3,16 @@ import pg from 'pg';
 import dotenv from 'dotenv';
 dotenv.config();
 
+const useSsl = (process.env.DATABASE_URL || '').includes('supabase.co') || 
+               (process.env.DATABASE_URL || '').includes('render.com') || 
+               (process.env.DATABASE_URL || '').includes('neon.tech') || 
+               process.env.DB_SSL === 'true';
+
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  ssl: useSsl ? { rejectUnauthorized: false } : false,
 });
+
 
 export const auth = betterAuth({
   database: pool,

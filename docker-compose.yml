@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: linkedin-jobfinder-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-jobfinder_user}
+      POSTGRES_PASSWORD: ${DB_PASS:-jobfinder_password}
+      POSTGRES_DB: ${DB_NAME:-linkedin_job_finder}
+    ports:
+      # Expõe a porta 5432 localmente no localhost do host para fins de backup/debug
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: linkedin-jobfinder-backend
+    restart: always
+    ports:
+      # Expõe para o localhost do host; Nginx reverte o proxy para cá
+      - "127.0.0.1:3001:3001"
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+    environment:
+      # Sobrescreve a URL do banco para apontar para o container do banco na rede interna do Docker
+      DATABASE_URL: postgresql://${DB_USER:-jobfinder_user}:${DB_PASS:-jobfinder_password}@db:5432/${DB_NAME:-linkedin_job_finder}
+      PORT: 3001
+      NODE_ENV: production
+    # Roda as migrações automaticamente antes de iniciar a API
+    command: sh -c "node scripts/setup-db.js && node src/server.js"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.seu-dominio.com}
+    container_name: linkedin-jobfinder-frontend
+    restart: always
+    ports:
+      # Expõe para o localhost do host; Nginx reverte o proxy para cá
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - backend
+    env_file:
+      - ./frontend/.env.local
+
+volumes:
+  pgdata:
