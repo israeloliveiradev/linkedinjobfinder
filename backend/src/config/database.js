@@ -188,20 +188,33 @@ class QueryBuilder {
         valuePlaceholders.push(`(${rowPlaceholders.join(', ')})`);
       }
 
-      let conflictAction = 'DO NOTHING';
-      if (this.upsertConflict) {
-        const conflictCols = this.upsertConflict.split(',').map(c => `"${c.trim()}"`).join(', ');
-        const conflictKeys = this.upsertConflict.split(',').map(c => c.trim());
-        const updateKeys = keys.filter(k => !conflictKeys.includes(k));
-        if (updateKeys.length > 0) {
-          const updateSets = updateKeys.map(k => `"${k}" = EXCLUDED."${k}"`).join(', ');
-          conflictAction = `ON CONFLICT (${conflictCols}) DO UPDATE SET ${updateSets}`;
-        } else {
-          conflictAction = `ON CONFLICT (${conflictCols}) DO NOTHING`;
-        }
+      const defaultConflicts = {
+        subscriptions: 'user_id',
+        search_presets: 'user_id, name',
+        user_resumes: 'id',
+        search_history: 'id',
+        admin_config: 'id',
+        user: 'id',
+        session: 'id',
+        account: 'id',
+        verification: 'id'
+      };
+
+      const conflictColsStr = this.upsertConflict || defaultConflicts[this.table] || 'id';
+      const conflictCols = conflictColsStr.split(',').map(c => `"${c.trim()}"`).join(', ');
+      const conflictKeys = conflictColsStr.split(',').map(c => c.trim());
+      const updateKeys = keys.filter(k => !conflictKeys.includes(k));
+
+      let conflictAction;
+      if (updateKeys.length > 0) {
+        const updateSets = updateKeys.map(k => `"${k}" = EXCLUDED."${k}"`).join(', ');
+        conflictAction = `ON CONFLICT (${conflictCols}) DO UPDATE SET ${updateSets}`;
+      } else {
+        conflictAction = `ON CONFLICT (${conflictCols}) DO NOTHING`;
       }
       sql = `INSERT INTO "${this.table}" (${columnsStr}) VALUES ${valuePlaceholders.join(', ')} ${conflictAction} RETURNING *`;
     }
+
 
     try {
       const res = await this.pool.query(sql, params);
